@@ -23,7 +23,7 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.static(path.join(__dirname, './views')))
-
+ 
 
 // set up static files
 app.listen(port, () =>
