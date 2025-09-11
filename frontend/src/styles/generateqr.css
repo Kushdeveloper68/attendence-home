@@ -1,0 +1,40 @@
+:root {
+  --teal-500: #14b8a6;
+  --orange-500: #f97316;
+  --navy-800: #1e3a8a;
+  --light-gray-200: #e5e7eb;
+  --light-gray-50: #f9fafb;
+}
+
+body {
+  font-family: 'Poppins', 'Inter', sans-serif;
+}
+
+.form-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+/* Replacing Tailwind @apply with pure CSS */
+.btn-generateqr-primary {
+  background-color: var(--orange-500);
+  color: white;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.btn-generateqr-primary:hover {
+  background-color: #ea580c; /* Tailwind orange-600 */
+}
+
+.btn-generateqr-secondary {
+  background-color: var(--teal-500);
+  color: white;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.btn-generateqr-secondary:hover {
+  background-color: #0d9488; /* Tailwind teal-600 */
+}

@@ -26,10 +26,10 @@
         background-size: 1.5em 1.5em;
         padding-right: 2.5rem;
       }
-      .btn-primary {
+      .btn-generateqr-primary {
         @apply bg-[var(--orange-500)] text-white hover:bg-orange-600 transition-colors;
       }
-      .btn-secondary {
+      .btn-generateqr-secondary {
          @apply bg-[var(--teal-500)] text-white hover:bg-teal-600 transition-colors;
       }
     </style>
@@ -93,7 +93,7 @@
 </div>
 </div>
 <div class="text-center">
-<button class="btn-primary font-bold py-4 px-10 text-lg rounded-lg shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all">
+<button class="btn-generateqr-primary font-bold py-4 px-10 text-lg rounded-lg shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all">
                 Generate QR Code
               </button>
 </div>
@@ -103,7 +103,7 @@
 <h3 class="text-2xl font-bold text-[var(--navy-800)] mb-2">Your QR Code is Ready!</h3>
 <p class="text-gray-600 mb-8">Scan this code to mark attendance.</p>
 <div class="flex justify-center items-center gap-4">
-<button class="btn-secondary flex items-center gap-2 font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all">
+<button class="btn-generateqr-secondary flex items-center gap-2 font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all">
 <span class="material-symbols-outlined">download</span>
                 Download
               </button>
@@ -135,16 +135,16 @@
 </button>
 <h3 class="text-2xl font-bold text-[var(--navy-800)] mb-4">QR Code Preview</h3>
 <img alt="QR Code Preview" class="mx-auto mb-6 rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPgY29NJUpbdyaaU0JNf84TMyi3x1ZaTJKILMODUjDwEPutt1tZFueCQzWTQmnKvFohvFsxNNa2nZWdSh0T4-KC3uIU_cxnQ-NtHOQEg9JPdxlHkptHs-jLQUM_geBzwUn4BSnvXLdjSd8ly3VxlG7QgiPEuSwh4MSOP-3_utfIRa-BtZLwDNRlbY999_437CjqhipzWp_Mn7dpySt7NUToh8ojIgU3Y1j0aYdd6VW_0E7S4vAE8LVxO08XqqsSyVnfV0wfa1EoQ"/>
-<button class="btn-primary font-bold py-3 px-8 text-base rounded-lg shadow-md hover:shadow-xl transition-all">
+<button class="btn-generateqr-primary font-bold py-3 px-8 text-base rounded-lg shadow-md hover:shadow-xl transition-all">
                 Confirm Download
             </button>
 </div>
 </div>
 <script>
         // Dummy script to show/hide QR code card and modal
-        const generateBtn = document.querySelector('.btn-primary');
+        const generateBtn = document.querySelector('.btn-generateqr-primary');
         const qrCard = document.getElementById('qr-code-card');
-        const downloadBtn = qrCard.querySelector('.btn-secondary');
+        const downloadBtn = qrCard.querySelector('.btn-generateqr-secondary');
         const previewModal = document.getElementById('preview-modal');
         const closeModalBtn = document.getElementById('close-modal');
         generateBtn.addEventListener('click', () => {

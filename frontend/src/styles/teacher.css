@@ -1,0 +1,31 @@
+:root {
+  --primary-teal: #14B8A6;
+  --primary-orange: #F97316;
+  --primary-navy: #1E3A8A;
+  --light-gray: #F3F4F6;
+  --dark-text: #111827;
+  --light-text: #6B7280;
+}
+
+body {
+  font-family: 'Poppins', 'Inter', sans-serif;
+}
+
+/* Button Primary */
+.btn-primary {
+  background-color: var(--primary-orange);
+  color: #ffffff;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: #ea580c; /* Tailwind's orange-600 */
+}
+
+/* Card */
+.card {
+  background-color: #ffffff;
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
+  overflow: hidden;
+}
