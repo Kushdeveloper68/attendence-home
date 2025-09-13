@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "../styles/markattendence.css"
+import Navbar from './Navbar';
+import Footer from './Footer';
 const students = [
   { name: "Sophia Clark", enroll: "2021CS001", present: false },
   { name: "Ethan Carter", enroll: "2021CS002", present: true },
@@ -29,37 +31,8 @@ export default function MarkAttendance() {
 
   return (
     <div className="relative flex size-full min-h-screen flex-col group/design-root bg-[var(--gray-100)] text-[var(--navy-900)]">
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <nav className="container mx-auto px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="text-[var(--teal-500)]">
-              <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.07V15H8v-2h3v-2.07c0-1.39.73-2.64 1.93-3.26C13.56 7.34 14.28 7 15 7v2h-1c-.55 0-1 .45-1 1v2h2l-.5 2h-1.5v2.07C10.97 16.64 9.17 15.65 9 17.07zm4-10.07h2v2h-2v-2z"></path>
-              </svg>
-            </div>
-            <h1 className="text-xl font-bold text-[var(--navy-900)]">EduTrack</h1>
-          </div>
-          <div className="hidden md:flex items-center gap-8">
-            <a className="text-sm font-medium text-[var(--gray-600)] hover:text-[var(--teal-500)] transition-colors" href="#">Dashboard</a>
-            <a className="text-sm font-medium text-[var(--gray-600)] hover:text-[var(--teal-500)] transition-colors" href="#">Courses</a>
-            <a className="text-sm font-bold text-[var(--teal-500)]" href="#">Attendance</a>
-            <a className="text-sm font-medium text-[var(--gray-600)] hover:text-[var(--teal-500)] transition-colors" href="#">Profile</a>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="relative text-[var(--gray-600)] hover:text-[var(--teal-500)] transition-colors">
-              <span className="material-symbols-outlined">notifications</span>
-              <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-[var(--orange-500)]"></span>
-            </button>
-            <div
-              className="w-10 h-10 rounded-full bg-cover bg-center"
-              style={{
-                backgroundImage:
-                  'url("https://lh3.googleusercontent.com/aida-public/AB6AXuD_yZZqcs5hvU9zEFaHwfgqfiRS787HaD1rIKXTN_IpsY7KDZG3ntmnC9WvUE9BeTtpaJpSDoiNmiwfViUHhfwwXWgH7C-18SrylKN6hWvorEIBRcBpNTkNSR_slhBjFWGvY7ZDIxmaXwC997qg26-CFV1Kidly_2TtlU3vsQpSG6pdhZh2AbdGBbCQh32glGZEmWchnmXr4Fp_F_IlnrRalfcVflKfTp8CsE_YqIl6y6i8i6G9GQMfjYyyvfjZTGOCqffsiZwEdQ")',
-              }}
-            ></div>
-          </div>
-        </nav>
-      </header>
+      <Navbar />
+      {/* Main Content */}
       <main className="flex-grow container mx-auto px-6 py-8">
         <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
           <h2 className="text-3xl font-bold text-[var(--navy-900)] mb-6">Mark Attendance</h2>
@@ -120,11 +93,7 @@ export default function MarkAttendance() {
           <span className="material-symbols-outlined">arrow_forward</span>
         </button>
       </div>
-      <footer className="bg-white mt-auto">
-        <div className="container mx-auto px-6 py-4 text-center text-sm text-[var(--gray-600)]">
-          © 2024 EduTrack. All Rights Reserved.
-        </div>
-      </footer>
+     <Footer/>
     </div>
     );
 }

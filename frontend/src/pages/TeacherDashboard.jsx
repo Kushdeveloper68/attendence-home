@@ -1,74 +1,21 @@
 import React from "react";
 import "../styles/teacher.css"
+import {Navbar, Footer, ProfileCard} from '../components';
+
 export default function TeacherDashboard() {
   return (
     <div className="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden bg-[var(--light-gray)]" style={{ fontFamily: "'Poppins', 'Inter', sans-serif" }}>
       <div className="layout-container flex h-full grow flex-col">
         {/* Header */}
-        <header className="bg-white shadow-sm sticky top-0 z-50">
-          <div className="container mx-auto px-6 lg:px-10">
-            <div className="flex items-center justify-between whitespace-nowrap py-4">
-              <div className="flex items-center gap-3">
-                <svg className="h-8 w-8 text-[var(--primary-teal)]" fill="none" viewBox="0 0 48 48"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <path clipRule="evenodd"
-                    d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z"
-                    fill="currentColor" fillRule="evenodd"></path>
-                  <path clipRule="evenodd"
-                    d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z"
-                    fill="currentColor" fillRule="evenodd"></path>
-                </svg>
-                <h1 className="text-[var(--dark-text)] text-xl font-bold">EduTrack</h1>
-              </div>
-              <nav className="hidden md:flex items-center gap-8">
-                <a className="text-[var(--dark-text)] text-base font-medium hover:text-[var(--primary-teal)] transition-colors"
-                  href="#">Dashboard</a>
-                <a className="text-[var(--light-text)] text-base font-medium hover:text-[var(--primary-teal)] transition-colors"
-                  href="#">Courses</a>
-                <a className="text-[var(--light-text)] text-base font-medium hover:text-[var(--primary-teal)] transition-colors"
-                  href="#">Attendance</a>
-                <a className="text-[var(--light-text)] text-base font-medium hover:text-[var(--primary-teal)] transition-colors"
-                  href="#">Reports</a>
-                <a className="text-[var(--light-text)] text-base font-medium hover:text-[var(--primary-teal)] transition-colors"
-                  href="#">Settings</a>
-              </nav>
-              <div className="flex items-center gap-4">
-                <button
-                  className="relative rounded-full p-2 text-[var(--light-text)] hover:bg-gray-100 hover:text-[var(--primary-navy)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-teal)] transition-all">
-                  <span className="material-symbols-outlined">notifications</span>
-                </button>
-                <div className="relative">
-                  <button className="flex items-center gap-2">
-                    <img alt="Profile" className="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-10 w-10"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDu_nwaSyxxwk01AwSEq1CPChFK21_9REKi7yCvq-b3mJ3d_xoyf97CmXA_XW3AHGG8HZoL2BKPIRkxI5DLQrW2FdEjzDVlX-wdNRg1UK6k_O1chJgE-1RKy8wJd6r9a0Lx-9uQ19JVlZJh3gm1uXntJhV9UdLdao-5cawHVUyy-wEUDN2vwYF2MwgZ9oFwl2PlXOaTabwyldMnHirEqESb_uGIWZUXtuMc9xv3j_tCWgSG4upyBHq0iGuJ_0G9wmCAzu2R7yyUSw" />
-                    <span className="material-symbols-outlined text-[var(--light-text)]">expand_more</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
+        <Navbar />  
+        
         {/* Main */}
         <main className="container mx-auto px-6 lg:px-10 py-8">
           <h2 className="text-3xl font-bold text-[var(--dark-text)] mb-8">Teacher Dashboard</h2>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
               {/* Profile Card */}
-              <div className="card p-6">
-                <div className="flex items-center gap-6">
-                  <div className="w-24 h-24 rounded-full bg-cover bg-center flex-shrink-0"
-                    style={{
-                      backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuD3a3YcnKCMJw42lboj-CDj4f_GGdkQZ4TddijGDlw5yt4Zwup1--G9pClBSc3-MwtpF8Rrajiy1cbv5pEL_e7zAPYNJOJeNcxUaSeR_Zv58CuXSePsJDtaXJeunrsHRsdV7HvkdXbbNu5fTAQ-wJgXOpYhTRuz7BP22NJ35c9umS9ltmyJVvKTbMpRXLnBKLaGTpKYgGgtjqqRVuumUsNXrnV8d9qj_cZDSwpgMLkoZ7A79h6221wVQld96l-AkxFR03acQdyNEw")`
-                    }}>
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-navy">Sophia Carter</h3>
-                    <p className="text-gray-600">Branch: <span className="font-medium text-gray-800">Computer Science</span></p>
-                    <p className="text-gray-600">Semester: <span className="font-medium text-gray-800">4</span></p>
-                    <p className="text-gray-600">Enrollment No: <span className="font-medium text-gray-800">2021CS001</span></p>
-                  </div>
-                </div>
-              </div>
+             <ProfileCard/>
               {/* QR Code Card */}
               <div className="card p-6 flex flex-col md:flex-row items-center gap-6 bg-[var(--primary-navy)] text-white">
                 <div className="flex-shrink-0">
@@ -182,48 +129,7 @@ export default function TeacherDashboard() {
           </div>
         </main>
         {/* Footer */}
-        <footer className="bg-white mt-12">
-          <div className="container mx-auto px-6 lg:px-10 py-8">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <div className="flex flex-wrap justify-center md:justify-start gap-6 mb-6 md:mb-0">
-                <a className="text-[var(--light-text)] hover:text-[var(--primary-teal)] transition-colors" href="#">About
-                  Us</a>
-                <a className="text-[var(--light-text)] hover:text-[var(--primary-teal)] transition-colors"
-                  href="#">Contact</a>
-                <a className="text-[var(--light-text)] hover:text-[var(--primary-teal)] transition-colors" href="#">Privacy
-                  Policy</a>
-                <a className="text-[var(--light-text)] hover:text-[var(--primary-teal)] transition-colors" href="#">Terms of
-                  Service</a>
-              </div>
-              <div className="flex justify-center gap-4 mb-6 md:mb-0">
-                <a className="text-[var(--light-text)] hover:text-[var(--primary-navy)] transition-colors" href="#">
-                  <svg aria-hidden="true" className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path clipRule="evenodd"
-                      d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
-                      fillRule="evenodd"></path>
-                  </svg>
-                </a>
-                <a className="text-[var(--light-text)] hover:text-[var(--primary-navy)] transition-colors" href="#">
-                  <svg aria-hidden="true" className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                      d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84">
-                    </path>
-                  </svg>
-                </a>
-                <a className="text-[var(--light-text)] hover:text-[var(--primary-navy)] transition-colors" href="#">
-                  <svg aria-hidden="true" className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path clipRule="evenodd"
-                      d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.345 2.525c.636-.247 1.363-.416 2.427-.465C9.795 2.013 10.148 2 12.315 2zm-1.161 1.043c-1.049.048-1.688.21-2.228.42a3.836 3.836 0 00-1.385.886 3.836 3.836 0 00-.886 1.385c-.21 1.049-.372 1.688-.42 2.228-.048 1.024-.06 1.357-.06 3.659s.012 2.635.06 3.659c.048 1.049.21 1.688.42 2.228a3.836 3.836 0 00.886 1.385 3.836 3.836 0 001.385.886c1.049.21 1.688.372 2.228.42 1.024.048 1.357.06 3.659.06s2.635-.012 3.659-.06c1.049-.048 1.688-.21 2.228-.42a3.836 3.836 0 001.385-.886 3.836 3.836 0 00.886-1.385c.21-1.049.372-1.688.42-2.228.048-1.024.06-1.357.06-3.659s-.012-2.635-.06-3.659c-.048-1.049-.21-1.688-.42-2.228a3.836 3.836 0 00-.886-1.385 3.836 3.836 0 00-1.385-.886c-1.049-.21-1.688-.372-2.228-.42-1.024-.048-1.357-.06-3.659-.06s-2.635.012-3.659.06zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 1.802a3.333 3.333 0 110 6.666 3.333 3.333 0 010-6.666zm5.338-3.205a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z"
-                      fillRule="evenodd"></path>
-                  </svg>
-                </a>
-              </div>
-            </div>
-            <div className="text-center text-[var(--light-text)] text-sm pt-4 border-t border-gray-200">
-              <p>© 2024 EduTrack. All rights reserved.</p>
-            </div>
-          </div>
-        </footer>
+       <Footer/>
       </div>
       </div>
   );

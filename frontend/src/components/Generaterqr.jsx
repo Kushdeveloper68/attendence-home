@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import  "../styles/generateqr.css"
+import Navbar from './Navbar';
+import Footer from './Footer';
 const GenerateQR = () => {
   const [showQR, setShowQR] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -7,56 +9,7 @@ const GenerateQR = () => {
   return (
     <div className="bg-[var(--light-gray-50)] flex min-h-screen flex-col">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
-        <nav className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <svg
-              className="h-8 w-8 text-[var(--teal-500)]"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
-              />
-            </svg>
-            <h1 className="text-2xl font-bold text-[var(--navy-800)]">
-              EduTrack
-            </h1>
-          </div>
-
-          <div className="hidden md:flex items-center gap-8">
-            {["Dashboard", "Courses", "Attendance", "Reports", "Settings"].map(
-              (item) => (
-                <a
-                  key={item}
-                  className="text-gray-600 hover:text-[var(--teal-500)] font-medium"
-                  href="#"
-                >
-                  {item}
-                </a>
-              )
-            )}
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div
-              className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
-              style={{
-                backgroundImage:
-                  "url('https://lh3.googleusercontent.com/aida-public/AB6AXuApHsYZKQ_WvhDagDBvbmTcDc-PRoVISKnXf5ZGkmungHivuvQNTnvkV-HPCx_F8XHb1wi7iyOxBAbGJFJ9hekazJ24H9X3SmjXtezfPiNguCBshVjUKBe16ScUY-e8J1-p9n-tuGa7Leeow4VpAudkfEGEtckjioukt2XliIo-Hp8h1AXiQKNPSDyXVV_lExqq8vCbT4PK_tsB7Y9itn4vKYYbXqCcP88qNiHmuUHO_DX-kji4ohB8cfmVAc4AsItiB2ZWcI-f3Q')",
-              }}
-            />
-            <button className="md:hidden text-gray-600 hover:text-[var(--teal-500)]">
-              <span className="material-symbols-outlined">menu</span>
-            </button>
-          </div>
-        </nav>
-      </header>
-
+      <Navbar />
       {/* Main */}
       <main className="flex-grow container mx-auto px-6 py-12">
         <div className="max-w-4xl mx-auto">
@@ -165,28 +118,7 @@ const GenerateQR = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-[var(--light-gray-200)] mt-auto">
-        <div className="container mx-auto px-6 py-8">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <p className="text-gray-500 text-sm">
-              © 2024 EduTrack. All rights reserved.
-            </p>
-            <div className="flex gap-6 mt-4 md:mt-0">
-              {["Privacy Policy", "Terms of Service", "Contact Us"].map(
-                (link) => (
-                  <a
-                    key={link}
-                    href="#"
-                    className="text-gray-500 hover:text-[var(--teal-500)] text-sm font-medium"
-                  >
-                    {link}
-                  </a>
-                )
-              )}
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer/>
 
       {/* Modal */}
       {showModal && (
