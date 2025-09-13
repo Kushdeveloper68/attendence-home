@@ -1,6 +1,23 @@
-import React from "react";
-
+import React , {useState} from "react";
+import {loginApi} from "../apis/API"
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    loginApi(email, password)
+      .then((data) => {
+        console.log("Login successful:", data);
+        // You can redirect the user or update the UI here
+      })
+      .catch((error) => {
+        console.error("Login failed:", error);
+        // Handle login failure (e.g., show error message)
+      });
+    // Handle login logic here
+  };
+
   return (
     <div className="bg-[var(--light-gray)] min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 relative">
       {/* Logo and Title */}
@@ -25,7 +42,7 @@ export default function Login() {
             />
           </svg>
         </div>
-        <h1 className="text-[var(--navy)] text-2xl font-bold">EduTrack</h1>
+        <h1 className="text-[var(--navy)] text-2xl font-bold">Attendance Home</h1>
       </div>
 
       {/* Main Card */}
@@ -40,7 +57,7 @@ export default function Login() {
             </p>
           </div>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Email */}
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
@@ -56,6 +73,8 @@ export default function Login() {
               </div>
               <input
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
                 className="form-input w-full rounded-lg border-gray-300 focus:border-[var(--teal)] focus:ring-[var(--teal)] h-14 pl-12 pr-4 text-base font-medium text-gray-700 placeholder:text-gray-400 transition"
               />
@@ -75,6 +94,8 @@ export default function Login() {
                 </svg>
               </div>
               <input
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 type="password"
                 placeholder="Password"
                 className="form-input w-full rounded-lg border-gray-300 focus:border-[var(--teal)] focus:ring-[var(--teal)] h-14 pl-12 pr-4 text-base font-medium text-gray-700 placeholder:text-gray-400 transition"

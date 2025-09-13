@@ -19,7 +19,7 @@ app.use(bodyPraser.json())
 app.use(bodyPraser.urlencoded({ extended: true }))
 app.use(cookiesP())
 app.use(cors({
-  origin: 'kush add your url', // your frontend URL
+  origin: 'http://localhost:5173/', // your frontend URL
   credentials: true
 }));
 app.use(express.static(path.join(__dirname, './views')))

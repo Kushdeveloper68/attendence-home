@@ -19,7 +19,7 @@ function Navbar() {
                     d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z"
                     fill="currentColor" fillRule="evenodd"></path>
                 </svg>
-                <h1 className="text-[var(--dark-text)] text-xl font-bold">EduTrack</h1>
+                <h1 className="text-[var(--dark-text)] text-xl font-bold">Attendance Home</h1>
               </div>
               <nav className="hidden md:flex items-center gap-8">
                 <Link className="text-[var(--dark-text)] text-base font-medium hover:text-[var(--primary-teal)] transition-colors"
@@ -144,7 +144,7 @@ function Navbar() {
               />
             </svg>
             <h1 className="text-2xl font-bold text-[var(--navy-800)]">
-              EduTrack
+              Attendance Home
             </h1>
           </div>
 
@@ -189,7 +189,7 @@ function Navbar() {
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.07V15H8v-2h3v-2.07c0-1.39.73-2.64 1.93-3.26C13.56 7.34 14.28 7 15 7v2h-1c-.55 0-1 .45-1 1v2h2l-.5 2h-1.5v2.07C10.97 16.64 9.17 15.65 9 17.07zm4-10.07h2v2h-2v-2z"></path>
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-[var(--navy-900)]">EduTrack</h1>
+            <h1 className="text-xl font-bold text-[var(--navy-900)]">Attendance Home</h1>
           </div>
           <div className="hidden md:flex items-center gap-8">
             <a className="text-sm font-medium text-[var(--gray-600)] hover:text-[var(--teal-500)] transition-colors" href="#">Dashboard</a>
@@ -228,7 +228,7 @@ function Navbar() {
             >
               <path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z'></path>
             </svg>
-            <h1 className='text-2xl font-bold text-navy'>EduTrack</h1>
+            <h1 className='text-2xl font-bold text-navy'>Attendance Home</h1>
           </div>
           <div className='hidden md:flex items-center gap-8 font-medium text-gray-600'>
             <a className='hover:text-teal' href='#'>

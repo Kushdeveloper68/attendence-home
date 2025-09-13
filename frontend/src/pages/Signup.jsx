@@ -1,7 +1,40 @@
 import React, { useState } from "react";
-
+import { signupStudentApi, signupTeacherApi } from "../apis/API";
 export default function Signup() {
   const [role, setRole] = useState("student");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [branch, setBranch] = useState();
+  const [semester, setSemester] = useState();
+  const [enrollment, setEnrollment] = useState();
+  const [uniqueid, setUniqueid] = useState();
+  const [phone, setPhone] = useState();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle signup logic here
+    if (role === "student") {
+      // Handle student signup
+      signupStudentApi({ name, email, password, branch, semester, enrollment, phone })
+        .then((data) => {
+          console.log("Student signed up successfully:", data);
+        })
+        .catch((error) => {
+          console.error("Error signing up student:", error);
+        });
+    } else {
+      // Handle teacher signup
+      signupTeacherApi({ name, email, branch, password, uniqueid, phone })
+        .then((data) => {
+          console.log("Teacher signed up successfully:", data);
+        })
+        .catch((error) => {
+          console.error("Error signing up teacher:", error);
+        });
+    }
+
+  };
 
   return (
     <div
@@ -51,12 +84,13 @@ export default function Signup() {
           </div>
 
           {/* Signup Form */}
-          <form action="#" method="POST" className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Name */}
             <div className="relative">
               <input
                 id="name"
-                name="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 type="text"
                 placeholder="John Doe"
                 className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
@@ -76,7 +110,8 @@ export default function Signup() {
             <div className="relative">
               <input
                 id="email"
-                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 type="email"
                 placeholder="john.doe@example.com"
                 className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
@@ -99,7 +134,8 @@ export default function Signup() {
                 <div className="relative">
                   <input
                     id="enrollment"
-                    name="enrollment"
+                   value={enrollment}
+                    onChange={(e) => setEnrollment(e.target.value)}
                     type="text"
                     placeholder="Enrollment Number"
                     className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
@@ -122,9 +158,10 @@ export default function Signup() {
               <>
                 {/* Unique ID */}
                 <div className="relative">
-                  <input
+                  <input 
                     id="uniqueid"
-                    name="uniqueid"
+                    value={uniqueid}
+                    onChange={(e) => setUniqueid(e.target.value)}
                     type="text"
                     placeholder="Unique ID"
                     className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
@@ -147,7 +184,8 @@ export default function Signup() {
               <div className="relative">
                 <select
                   id="branch"
-                  name="branch"
+                  value={branch}
+                  onChange={(e) => setBranch(e.target.value)}
                   className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4 appearance-none"
                   style={{
                     backgroundImage: "var(--select-button-svg)",
@@ -175,7 +213,8 @@ export default function Signup() {
                 <div className="relative">
                   <select
                     id="semester"
-                    name="semester"
+                    value={semester}
+                    onChange={(e) => setSemester(e.target.value)}
                     className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4 appearance-none"
                     style={{
                       backgroundImage: "var(--select-button-svg)",
@@ -207,7 +246,8 @@ export default function Signup() {
             <div className="relative">
               <input
                 id="phone"
-                name="phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
                 type="tel"
                 placeholder="Phone Number"
                 className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
@@ -227,7 +267,8 @@ export default function Signup() {
             <div className="relative">
               <input
                 id="password"
-                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 type="password"
                 placeholder="Password"
                 className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
