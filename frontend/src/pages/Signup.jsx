@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 
 export default function Signup() {
+  const [role, setRole] = useState("student");
+
   return (
     <div
       className="bg-gray-50 min-h-screen flex flex-col overflow-x-hidden"
@@ -23,10 +25,26 @@ export default function Signup() {
           {/* Toggle Buttons */}
           <div className="mb-6">
             <div className="flex border-b border-gray-200">
-              <button className="flex-1 text-center py-3 font-semibold text-teal-600 border-b-2 border-teal-600 transition-colors duration-300">
+              <button
+                className={`flex-1 text-center py-3 font-semibold border-b-2 transition-colors duration-300 ${
+                  role === "student"
+                    ? "text-teal-600 border-teal-600"
+                    : "text-gray-500 border-transparent hover:text-teal-600"
+                }`}
+                type="button"
+                onClick={() => setRole("student")}
+              >
                 Student
               </button>
-              <button className="flex-1 text-center py-3 font-semibold text-gray-500 hover:text-teal-600 transition-colors duration-300">
+              <button
+                className={`flex-1 text-center py-3 font-semibold border-b-2 transition-colors duration-300 ${
+                  role === "teacher"
+                    ? "text-teal-600 border-teal-600"
+                    : "text-gray-500 border-transparent hover:text-teal-600"
+                }`}
+                type="button"
+                onClick={() => setRole("teacher")}
+              >
                 Teacher
               </button>
             </div>
@@ -42,12 +60,13 @@ export default function Signup() {
                 type="text"
                 placeholder="John Doe"
                 className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
+                required
               />
               <label
                 htmlFor="name"
                 className="absolute left-4 -top-3.5 text-gray-600 text-sm transition-all 
                 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 
-                peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-teal-600 peer-focus:text-sm"
+                peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-teal-600 peer-focus:text-sm"
               >
                 Name
               </label>
@@ -61,37 +80,69 @@ export default function Signup() {
                 type="email"
                 placeholder="john.doe@example.com"
                 className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
+                required
               />
               <label
                 htmlFor="email"
                 className="absolute left-4 -top-3.5 text-gray-600 text-sm transition-all 
                 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 
-                peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-teal-600 peer-focus:text-sm"
+                peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-teal-600 peer-focus:text-sm"
               >
                 Email Address
               </label>
             </div>
 
-            {/* Enrollment Number */}
-            <div className="relative">
-              <input
-                id="enrollment"
-                name="enrollment"
-                type="text"
-                placeholder="Enrollment Number"
-                className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
-              />
-              <label
-                htmlFor="enrollment"
-                className="absolute left-4 -top-3.5 text-gray-600 text-sm transition-all 
-                peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 
-                peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-teal-600 peer-focus:text-sm"
-              >
-                Enrollment Number
-              </label>
-            </div>
+            {/* Student-specific fields */}
+            {role === "student" && (
+              <>
+                {/* Enrollment Number */}
+                <div className="relative">
+                  <input
+                    id="enrollment"
+                    name="enrollment"
+                    type="text"
+                    placeholder="Enrollment Number"
+                    className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
+                    required
+                  />
+                  <label
+                    htmlFor="enrollment"
+                    className="absolute left-4 -top-3.5 text-gray-600 text-sm transition-all 
+                    peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 
+                    peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-teal-600 peer-focus:text-sm"
+                  >
+                    Enrollment Number
+                  </label>
+                </div>
+              </>
+            )}
 
-            {/* Branch & Semester */}
+            {/* Teacher-specific fields */}
+            {role === "teacher" && (
+              <>
+                {/* Unique ID */}
+                <div className="relative">
+                  <input
+                    id="uniqueid"
+                    name="uniqueid"
+                    type="text"
+                    placeholder="Unique ID"
+                    className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
+                    required
+                  />
+                  <label
+                    htmlFor="uniqueid"
+                    className="absolute left-4 -top-3.5 text-gray-600 text-sm transition-all 
+                    peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 
+                    peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-teal-600 peer-focus:text-sm"
+                  >
+                    Unique ID
+                  </label>
+                </div>
+              </>
+            )}
+
+            {/* Branch & Semester (Semester only for students) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative">
                 <select
@@ -104,12 +155,14 @@ export default function Signup() {
                     backgroundRepeat: "no-repeat",
                     backgroundSize: "1.5em 1.5em",
                   }}
+                  required
                 >
                   <option value="" hidden disabled selected></option>
-                  <option>Computer Science</option>
-                  <option>Mechanical</option>
-                  <option>Electronics</option>
-                  <option>Civil</option>
+                  <option>Computer Engineering</option>
+                  <option>Mechanical Engineering</option>
+                  <option>Electrical Engineering</option>
+                  <option>Civil Engineering</option>
+                  <option>Mining Engineering</option>
                 </select>
                 <label
                   htmlFor="branch"
@@ -118,36 +171,36 @@ export default function Signup() {
                   Branch
                 </label>
               </div>
-
-              <div className="relative">
-                <select
-                  id="semester"
-                  name="semester"
-                  className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4 appearance-none"
-                  style={{
-                    backgroundImage: "var(--select-button-svg)",
-                    backgroundPosition: "right 0.75rem center",
-                    backgroundRepeat: "no-repeat",
-                    backgroundSize: "1.5em 1.5em",
-                  }}
-                >
-                  <option value="" hidden disabled selected></option>
-                  <option>1st</option>
-                  <option>2nd</option>
-                  <option>3rd</option>
-                  <option>4th</option>
-                  <option>5th</option>
-                  <option>6th</option>
-                  <option>7th</option>
-                  <option>8th</option>
-                </select>
-                <label
-                  htmlFor="semester"
-                  className="absolute left-4 -top-3.5 text-gray-600 text-sm bg-white px-1"
-                >
-                  Semester
-                </label>
-              </div>
+              {role === "student" && (
+                <div className="relative">
+                  <select
+                    id="semester"
+                    name="semester"
+                    className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4 appearance-none"
+                    style={{
+                      backgroundImage: "var(--select-button-svg)",
+                      backgroundPosition: "right 0.75rem center",
+                      backgroundRepeat: "no-repeat",
+                      backgroundSize: "1.5em 1.5em",
+                    }}
+                    required
+                  >
+                    <option value="" hidden disabled selected></option>
+                    <option>1st</option>
+                    <option>2nd</option>
+                    <option>3rd</option>
+                    <option>4th</option>
+                    <option>5th</option>
+                    <option>6th</option>
+                  </select>
+                  <label
+                    htmlFor="semester"
+                    className="absolute left-4 -top-3.5 text-gray-600 text-sm bg-white px-1"
+                  >
+                    Semester
+                  </label>
+                </div>
+              )}
             </div>
 
             {/* Phone */}
@@ -158,12 +211,13 @@ export default function Signup() {
                 type="tel"
                 placeholder="Phone Number"
                 className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
+                required
               />
               <label
                 htmlFor="phone"
                 className="absolute left-4 -top-3.5 text-gray-600 text-sm transition-all 
                 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 
-                peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-teal-600 peer-focus:text-sm"
+                peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-teal-600 peer-focus:text-sm"
               >
                 Phone Number
               </label>
@@ -177,12 +231,13 @@ export default function Signup() {
                 type="password"
                 placeholder="Password"
                 className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
+                required
               />
               <label
                 htmlFor="password"
                 className="absolute left-4 -top-3.5 text-gray-600 text-sm transition-all 
                 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 
-                peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-teal-600 peer-focus:text-sm"
+                peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-teal-600 peer-focus:text-sm"
               >
                 Password
               </label>
