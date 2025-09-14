@@ -1,49 +1,167 @@
 import React, { useState } from "react";
-import { signupStudentApi, signupTeacherApi } from "../apis/API";
+import { signupStudentApi, signupTeacherApi, sendOtpApi, verifyOtpApi } from "../apis/API";
+import { useNavigate } from 'react-router-dom';
+
 export default function Signup() {
   const [role, setRole] = useState("student");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [branch, setBranch] = useState();
-  const [semester, setSemester] = useState();
-  const [enrollment, setEnrollment] = useState();
-  const [uniqueid, setUniqueid] = useState();
-  const [phone, setPhone] = useState();
+  const [branch, setBranch] = useState("");
+  const [semester, setSemester] = useState("");
+  const [enrollment, setEnrollment] = useState("");
+  const [uniqueid, setUniqueid] = useState("");
+  const [phone, setPhone] = useState("");
+  const [showOtpBox, setShowOtpBox] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
+  const [signupData, setSignupData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState("");
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+  // Handle form submit: send OTP to email
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle signup logic here
-    if (role === "student") {
-      // Handle student signup
-      signupStudentApi({ name, email, password, branch, semester, enrollment, phone })
-        .then((data) => {
-          console.log("Student signed up successfully:", data);
-        })
-        .catch((error) => {
-          console.error("Error signing up student:", error);
-        });
-    } else {
-      // Handle teacher signup
-      signupTeacherApi({ name, email, branch, password, uniqueid, phone })
-        .then((data) => {
-          console.log("Teacher signed up successfully:", data);
-        })
-        .catch((error) => {
-          console.error("Error signing up teacher:", error);
-        });
-    }
+    setMsg("");
+    setOtpError("");
+    setLoading(true);
 
+    // Save signup data for later use
+    const data =
+      role === "student"
+        ? { name, email, password, branch, semester, enrollment, phone , role}
+        : { name, email, branch, password, uniqueid, phone , role };
+  console.log(data);
+    setSignupData(data);
+
+    try {  
+      const res = await sendOtpApi({ email }) ;
+      console.log(res);
+      if (res.success) {
+        setShowOtpBox(true);
+        setMsg("OTP sent to your email.");
+      } else {
+        setMsg(res.message || "Failed to send OTP.");
+      }
+    } catch (err) {
+      setMsg("Failed to send OTP.");
+    }
+    setLoading(false);
+  };
+
+  // Handle OTP verification and signup
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+    setOtpError("");
+    setLoading(true);
+
+    try {
+      // Verify OTP first
+      const verifyRes = await verifyOtpApi({ email, otp });
+      console.log("otp verify",verifyRes);
+      if (!verifyRes.success) {
+        setOtpError(verifyRes.message || "Invalid OTP.");
+        setLoading(false);
+        return;
+      }
+
+      // OTP verified, now signup
+      let signupRes;
+      if (role === "student") {
+        signupRes = await signupStudentApi({ ...signupData, otp });
+      } else {
+        signupRes = await signupTeacherApi({ ...signupData, otp });
+      }
+      console.log("signup",signupRes);
+      if (signupRes.success) {
+        localStorage.setItem('user', JSON.stringify(signupRes.user))
+        localStorage.setItem('token', signupRes.token)
+        sessionStorage.setItem('user', JSON.stringify(signupRes.user))
+        sessionStorage.setItem('token', signupRes.token)
+        setMsg("Signup successful! You can now log in.");
+        setShowOtpBox(false);
+// Optionally, redirect or clear form here
+        signupRes.user.role === "student" ?
+        navigate("/studentdashboard",{
+          state: { user: signupRes.user, token: signupRes.token }
+        }) :
+        navigate("/teacherdashboard",{
+          state: { user: signupRes.user, token: signupRes.token }
+        });
+
+      } else {
+        setOtpError(signupRes.message || "Signup failed.");
+      }
+    } catch (err) {
+      setOtpError("Signup failed. internal error");
+    }
+    setLoading(false);
   };
 
   return (
     <div
-      className="bg-gray-50 min-h-screen flex flex-col overflow-x-hidden"
+      className="bg-gray-50 min-h-screen flex flex-col overflow-x-hidden relative"
       style={{
         ["--select-button-svg"]: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24px' height='24px' fill='rgb(107, 114, 128)' viewBox='0 0 256 256'%3e%3cpath d='M181.66,170.34a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,11.32-11.32L128,212.69l42.34-42.35A8,8,0,0,1,181.66,170.34Zm-96-84.68L128,43.31l42.34,42.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,85.66Z'/%3e%3c/svg%3e")`,
       }}
     >
-      <div className="flex flex-1 justify-center items-center py-12 px-4">
+      {/* Overlay and OTP Box */}
+      {showOtpBox && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-xs relative">
+            <button
+              className="absolute top-2 right-3 text-gray-400 hover:text-gray-700 text-2xl"
+              onClick={() => setShowOtpBox(false)}
+              aria-label="Close"
+              disabled={loading}
+            >
+              &times;
+            </button>
+            <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">Enter OTP</h2>
+            <form onSubmit={handleOtpSubmit} className="space-y-4">
+              <input
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                placeholder="Enter OTP"
+                maxLength={6}
+                required
+                disabled={loading}
+              />
+              {otpError && (
+                <div className="text-red-500 text-sm text-center">{otpError}</div>
+              )}
+              <button
+                type="submit"
+                className="w-full py-2 rounded-lg bg-teal-600 text-white font-semibold hover:bg-teal-700 transition"
+                disabled={loading}
+              >
+                {loading ? "Verifying..." : "Verify & Signup"}
+              </button>
+            </form>
+            <div className="text-center text-sm text-gray-500 mt-3">
+              Didn't get OTP? <button className="text-teal-600 hover:underline" onClick={async () => {
+                setLoading(true);
+                setOtpError("");
+                setMsg("");
+                try {
+                  const res = await sendOtpApi({ email });
+                  setMsg(res.success ? "OTP resent to your email." : res.message || "Failed to resend OTP.");
+                } catch {
+                  setMsg("Failed to resend OTP.");
+                }
+                setLoading(false);
+              }} disabled={loading}>Resend</button>
+            </div>
+            {msg && <div className="text-center text-teal-600 mt-2">{msg}</div>}
+          </div>
+        </div>
+      )}
+
+      {/* Main Signup Form (blurred when OTP box is open) */}
+      <div className={`flex flex-1 justify-center items-center py-12 px-4 ${showOtpBox ? "filter blur-sm pointer-events-none select-none" : ""}`}>
         <div className="bg-white rounded-2xl shadow-lg w-full max-w-lg p-8">
           {/* Header */}
           <div className="text-center mb-8">
@@ -66,6 +184,7 @@ export default function Signup() {
                 }`}
                 type="button"
                 onClick={() => setRole("student")}
+                disabled={showOtpBox}
               >
                 Student
               </button>
@@ -77,6 +196,7 @@ export default function Signup() {
                 }`}
                 type="button"
                 onClick={() => setRole("teacher")}
+                disabled={showOtpBox}
               >
                 Teacher
               </button>
@@ -95,6 +215,7 @@ export default function Signup() {
                 placeholder="John Doe"
                 className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
                 required
+                disabled={showOtpBox}
               />
               <label
                 htmlFor="name"
@@ -116,6 +237,7 @@ export default function Signup() {
                 placeholder="john.doe@example.com"
                 className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
                 required
+                disabled={showOtpBox}
               />
               <label
                 htmlFor="email"
@@ -134,12 +256,13 @@ export default function Signup() {
                 <div className="relative">
                   <input
                     id="enrollment"
-                   value={enrollment}
+                    value={enrollment}
                     onChange={(e) => setEnrollment(e.target.value)}
                     type="text"
                     placeholder="Enrollment Number"
                     className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
                     required
+                    disabled={showOtpBox}
                   />
                   <label
                     htmlFor="enrollment"
@@ -158,7 +281,7 @@ export default function Signup() {
               <>
                 {/* Unique ID */}
                 <div className="relative">
-                  <input 
+                  <input
                     id="uniqueid"
                     value={uniqueid}
                     onChange={(e) => setUniqueid(e.target.value)}
@@ -166,6 +289,7 @@ export default function Signup() {
                     placeholder="Unique ID"
                     className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
                     required
+                    disabled={showOtpBox}
                   />
                   <label
                     htmlFor="uniqueid"
@@ -194,8 +318,9 @@ export default function Signup() {
                     backgroundSize: "1.5em 1.5em",
                   }}
                   required
+                  disabled={showOtpBox}
                 >
-                  <option value="" hidden disabled selected></option>
+                  <option value="" hidden disabled></option>
                   <option>Computer Engineering</option>
                   <option>Mechanical Engineering</option>
                   <option>Electrical Engineering</option>
@@ -223,8 +348,9 @@ export default function Signup() {
                       backgroundSize: "1.5em 1.5em",
                     }}
                     required
+                    disabled={showOtpBox}
                   >
-                    <option value="" hidden disabled selected></option>
+                    <option value="" hidden disabled></option>
                     <option>1st</option>
                     <option>2nd</option>
                     <option>3rd</option>
@@ -252,6 +378,7 @@ export default function Signup() {
                 placeholder="Phone Number"
                 className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
                 required
+                disabled={showOtpBox}
               />
               <label
                 htmlFor="phone"
@@ -273,6 +400,7 @@ export default function Signup() {
                 placeholder="Password"
                 className="peer h-12 w-full border border-gray-300 rounded-lg text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent px-4"
                 required
+                disabled={showOtpBox}
               />
               <label
                 htmlFor="password"
@@ -289,10 +417,12 @@ export default function Signup() {
               <button
                 type="submit"
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-300 ease-in-out"
+                disabled={showOtpBox || loading}
               >
-                Sign Up
+                {loading ? "Sending OTP..." : "Sign Up"}
               </button>
             </div>
+            {msg && <div className="text-center text-red-600 mt-2">{msg}</div>}
           </form>
 
           {/* Footer */}

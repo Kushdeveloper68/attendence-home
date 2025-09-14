@@ -34,3 +34,23 @@ export const signupTeacherApi = async (userData) => {
     throw error;
   }
 };
+
+export const sendOtpApi = async (email) => {
+  try {
+    const response = await API.post('/send-otp', email);
+    return response.data;
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    throw error;
+  }
+}
+
+export const verifyOtpApi = async ({email , otp}) => {
+  try {
+    const response = await API.post('/verify-otp',{email , otp});
+    return response.data;
+  } catch (error) {
+    console.error('Error verifying OTP:', error);
+    throw error;
+  }
+}

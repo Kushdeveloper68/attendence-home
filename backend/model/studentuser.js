@@ -32,6 +32,10 @@ const studentUserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  role:{
+    type:String,
+    required:true
+  }
 });
 
 const StudentUser = mongoose.model('StudentUser', studentUserSchema);

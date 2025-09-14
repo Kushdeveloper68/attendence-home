@@ -20,7 +20,7 @@ const teacherUserSchema = new mongoose.Schema({
     required: true,
   },
    phone: {
-    stype: String,
+    type: String,
     required: true,
     unique: true,
    },
@@ -28,6 +28,10 @@ const teacherUserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  role:{
+      type:String,
+      required:true
+    }
 });
 
 const TeacherUser = mongoose.model('TeacherUser', teacherUserSchema);
