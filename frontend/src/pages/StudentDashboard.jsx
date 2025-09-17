@@ -1,10 +1,26 @@
 import "../styles/student.css"
+
 import {Navbar, Footer, ProfileCard} from '../components/';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {useApi} from "../apis/API"
 
 export default function StudentDashboard () {
+  const api = useApi()
+  const navigator = useNavigate();
+    const user = localStorage.getItem("student")|| localStorage.getItem("teacher");
+    const token = localStorage.getItem("token");
+useEffect(() => {
+  if(!user && !token) navigator("/");
+     const role = JSON.parse(user)?.role;
+     if (role !== "student") {
+      navigator("/");
+     }
+   }, [user])
   return (
     <div className='relative flex min-h-screen flex-col bg-gray-100 font-poppins'>
       {/* Header */}
+      
       <Navbar />
      
       {/* Main */}
@@ -13,8 +29,8 @@ export default function StudentDashboard () {
         <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
           <div className='lg:col-span-2 space-y-8'>
             {/* Profile Card */}
-           
-<ProfileCard/>
+
+            <ProfileCard user={user} />
             {/* Actions & Attendance */}
             <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
               <div className='card p-6 flex flex-col items-center justify-center text-center'>

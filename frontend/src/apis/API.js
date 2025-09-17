@@ -1,9 +1,23 @@
 import axios from 'axios'
-
+import { useAuth } from '../context/AuthContext';
 const API = axios.create({
   baseURL: 'http://localhost:5000/', // Update with your backend API URL
   withCredentials: true,
 });
+
+// Custom hook to set token in header
+export function useApi() {
+  const { token } = useAuth();
+
+  API.interceptors.request.use((config) => {
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  });
+
+  return API;
+}
 
 export const loginApi = async (email, password) => {
   try {

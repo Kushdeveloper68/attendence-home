@@ -1,21 +1,58 @@
-import React , {useState} from "react";
-import {loginApi} from "../apis/API"
+import React, { useCallback, useState, useEffect } from "react";
+import { loginApi } from "../apis/API";
+import { useNavigate } from 'react-router-dom';
+
 export default function Login() {
+ 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+   const navigate = useNavigate();
+// Check for existing user and redirect
+   useEffect(() => {
+    const student = localStorage.getItem("student");
+    const teacher = localStorage.getItem("teacher");
+    const token = localStorage.getItem("token");
+    let user = null;
+    if (student) user = JSON.parse(student);
+    else if (teacher) user = JSON.parse(teacher);
 
-  const handleSubmit = (e) => {
+    if (user && user.role) {
+      if (user.role === "student" && token) {
+        navigate("/studentdashboard");
+      } else if (user.role === "teacher" && token) {
+        navigate("/teacherdashboard");
+      }
+    }
+  }, [navigate]);
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    loginApi(email, password)
-      .then((data) => {
-        console.log("Login successful:", data);
-        // You can redirect the user or update the UI here
-      })
-      .catch((error) => {
-        console.error("Login failed:", error);
-        // Handle login failure (e.g., show error message)
-      });
-    // Handle login logic here
+    setErrorMsg("");
+    setLoading(true);
+    try {
+      const data = await loginApi(email, password);
+      // You can redirect the user or update the UI here
+      if (data && data.user && data.user.role === "student") {
+        localStorage.setItem("student", JSON.stringify(data.user));
+        localStorage.setItem("token", data.token);
+        navigate("/studentdashboard");
+
+      } else if (data && data.user && data.user.role === "teacher") {
+        localStorage.setItem("teacher", JSON.stringify(data.user));
+        localStorage.setItem("token", data.token);  
+        navigate("/teacherdashboard");
+      } else {
+        setErrorMsg(data.message || "Login failed. Please check your credentials.");
+      }
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setErrorMsg(error.response.data.message);
+      } else {
+        setErrorMsg("Login failed. Internal error.");
+      }
+    }
+    setLoading(false);
   };
 
   return (
@@ -58,6 +95,13 @@ export default function Login() {
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* Error Message */}
+            {errorMsg && (
+              <div className="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-2 rounded mb-2 text-center text-sm font-semibold">
+                {errorMsg}
+              </div>
+            )}
+
             {/* Email */}
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
@@ -77,6 +121,7 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
                 className="form-input w-full rounded-lg border-gray-300 focus:border-[var(--teal)] focus:ring-[var(--teal)] h-14 pl-12 pr-4 text-base font-medium text-gray-700 placeholder:text-gray-400 transition"
+                disabled={loading}
               />
             </div>
 
@@ -99,6 +144,7 @@ export default function Login() {
                 type="password"
                 placeholder="Password"
                 className="form-input w-full rounded-lg border-gray-300 focus:border-[var(--teal)] focus:ring-[var(--teal)] h-14 pl-12 pr-4 text-base font-medium text-gray-700 placeholder:text-gray-400 transition"
+                disabled={loading}
               />
             </div>
 
@@ -117,8 +163,9 @@ export default function Login() {
               <button
                 type="submit"
                 className="w-full flex items-center justify-center rounded-lg bg-[var(--teal)] text-white h-14 px-4 text-lg font-bold tracking-wide hover:bg-[var(--orange)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--orange)] transition-all duration-300 ease-in-out transform hover:-translate-y-1"
+                disabled={loading}
               >
-                Login
+                {loading ? "Logging in..." : "Login"}
               </button>
             </div>
           </form>

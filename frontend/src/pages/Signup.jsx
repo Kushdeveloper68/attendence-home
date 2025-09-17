@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect } from "react";
 import { signupStudentApi, signupTeacherApi, sendOtpApi, verifyOtpApi } from "../apis/API";
 import { useNavigate } from 'react-router-dom';
-
+import { useAuth } from "../context/AuthContext";
 export default function Signup() {
+  const {setToken} = useAuth()
   const [role, setRole] = useState("student");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -21,6 +22,21 @@ export default function Signup() {
 
   const navigate = useNavigate();
   // Handle form submit: send OTP to email
+  useEffect(() => {
+      const student = localStorage.getItem("student");
+      const teacher = localStorage.getItem("teacher");
+      let user = null;
+      if (student) user = JSON.parse(student);
+      else if (teacher) user = JSON.parse(teacher);
+  
+      if (user && user.role) {
+        if (user.role === "student") {
+          navigate("/studentdashboard");
+        } else if (user.role === "teacher") {
+          navigate("/teacherdashboard");
+        }
+      }
+    }, [navigate]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg("");
@@ -30,13 +46,13 @@ export default function Signup() {
     // Save signup data for later use
     const data =
       role === "student"
-        ? { name, email, password, branch, semester, enrollment, phone , role}
-        : { name, email, branch, password, uniqueid, phone , role };
-  console.log(data);
+        ? { name, email, password, branch, semester, enrollment, phone, role }
+        : { name, email, branch, password, uniqueid, phone, role };
+    console.log(data);
     setSignupData(data);
 
-    try {  
-      const res = await sendOtpApi({ email }) ;
+    try {
+      const res = await sendOtpApi({ email });
       console.log(res);
       if (res.success) {
         setShowOtpBox(true);
@@ -59,7 +75,7 @@ export default function Signup() {
     try {
       // Verify OTP first
       const verifyRes = await verifyOtpApi({ email, otp });
-      console.log("otp verify",verifyRes);
+      console.log("otp verify", verifyRes);
       if (!verifyRes.success) {
         setOtpError(verifyRes.message || "Invalid OTP.");
         setLoading(false);
@@ -73,22 +89,22 @@ export default function Signup() {
       } else {
         signupRes = await signupTeacherApi({ ...signupData, otp });
       }
-      console.log("signup",signupRes);
+      console.log("signup", signupRes);
       if (signupRes.success) {
-        localStorage.setItem('user', JSON.stringify(signupRes.user))
-        localStorage.setItem('token', signupRes.token)
-        sessionStorage.setItem('user', JSON.stringify(signupRes.user))
-        sessionStorage.setItem('token', signupRes.token)
         setMsg("Signup successful! You can now log in.");
         setShowOtpBox(false);
-// Optionally, redirect or clear form here
-        signupRes.user.role === "student" ?
-        navigate("/studentdashboard",{
-          state: { user: signupRes.user, token: signupRes.token }
-        }) :
-        navigate("/teacherdashboard",{
-          state: { user: signupRes.user, token: signupRes.token }
-        });
+        // Optionally, redirect or clear form here
+        if (signupRes.user.role === "student") {
+          localStorage.setItem("student", JSON.stringify(signupRes.user));
+          localStorage.setItem("token", signupRes.token);
+          setToken(signupRes.token)
+          navigate("/studentdashboard")
+        } else {
+          localStorage.setItem("teacher", JSON.stringify(signupRes.user));
+          localStorage.setItem("token", signupRes.token);
+          setToken(signupRes.token);
+          navigate("/teacherdashboard");
+        }
 
       } else {
         setOtpError(signupRes.message || "Signup failed.");
@@ -177,11 +193,10 @@ export default function Signup() {
           <div className="mb-6">
             <div className="flex border-b border-gray-200">
               <button
-                className={`flex-1 text-center py-3 font-semibold border-b-2 transition-colors duration-300 ${
-                  role === "student"
+                className={`flex-1 text-center py-3 font-semibold border-b-2 transition-colors duration-300 ${role === "student"
                     ? "text-teal-600 border-teal-600"
                     : "text-gray-500 border-transparent hover:text-teal-600"
-                }`}
+                  }`}
                 type="button"
                 onClick={() => setRole("student")}
                 disabled={showOtpBox}
@@ -189,11 +204,10 @@ export default function Signup() {
                 Student
               </button>
               <button
-                className={`flex-1 text-center py-3 font-semibold border-b-2 transition-colors duration-300 ${
-                  role === "teacher"
+                className={`flex-1 text-center py-3 font-semibold border-b-2 transition-colors duration-300 ${role === "teacher"
                     ? "text-teal-600 border-teal-600"
                     : "text-gray-500 border-transparent hover:text-teal-600"
-                }`}
+                  }`}
                 type="button"
                 onClick={() => setRole("teacher")}
                 disabled={showOtpBox}

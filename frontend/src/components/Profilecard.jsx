@@ -1,9 +1,24 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useLocation } from 'react-router-dom';
 
-function ProfileCard() {
+function ProfileCard({ user }) {
   const location = useLocation();
   const path = location.pathname;
+  const [parsedUser, setParsedUser] = React.useState(null);
+
+  useEffect(() => {
+    if (typeof user === "string") {
+      try {
+        setParsedUser(JSON.parse(user));
+      } catch (err) {
+        console.error("Invalid user JSON:", err);
+        setParsedUser(null); 
+      }
+    } else {
+      setParsedUser(user || null); // agar object already aaya ho
+    }
+  }, [user]);
+ 
   switch (path) {
     case "/studentdashboard":
       return  (
@@ -18,21 +33,21 @@ function ProfileCard() {
                 ></div>
                 <div>
                   <h3 className='text-2xl font-bold text-navy'>
-                    Sophia Carter
+                    {parsedUser.name}
                   </h3>
                   <p className='text-gray-600'>
                     Branch:{' '}
                     <span className='font-medium text-gray-800'>
-                      Computer Science
+                      {parsedUser.branch}
                     </span>
                   </p>
                   <p className='text-gray-600'>
                     Semester:{' '}
-                    <span className='font-medium text-gray-800'>4</span>
+                    <span className='font-medium text-gray-800'>{parsedUser.semester}</span>
                   </p>
                   <p className='text-gray-600'>
                     Enrollment No:{' '}
-                    <span className='font-medium text-gray-800'>2021CS001</span>
+                    <span className='font-medium text-gray-800'>{parsedUser.enrollmentNumber}</span>
                   </p>
                 </div>
               </div>
@@ -49,9 +64,9 @@ function ProfileCard() {
                     }}>
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-navy">Sophia Carter</h3>
-                    <p className="text-gray-600">Branch: <span className="font-medium text-gray-800">Computer Science</span></p>
-                    <p className="text-gray-600">Unique No: <span className="font-medium text-gray-800">2021CS001</span></p>
+                    <h3 className="text-2xl font-bold text-navy">{parsedUser.name}</h3>
+                    <p className="text-gray-600">Branch: <span className="font-medium text-gray-800">{parsedUser.branch}</span></p>
+                    <p className="text-gray-600">Unique No: <span className="font-medium text-gray-800">{parsedUser.uniqueId}</span></p>
                   </div>
                 </div>
               </div>);

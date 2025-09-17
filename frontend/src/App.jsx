@@ -4,6 +4,7 @@ import { Scanner } from '@yudiel/react-qr-scanner';
 import {GenerateQR, MarkAttendance} from "./components"
 import {Login, Signup, StudentDashboard, TeacherDashboard} from './pages';
 import {BrowserRouter , Router , Routes, Route} from "react-router-dom"
+import { AuthProvider } from './context/authcontext';
 function App() {
   const [count, setCount] = useState(0)
 const handleScan = (data) => {
@@ -12,6 +13,7 @@ const handleScan = (data) => {
     }
   };
   return (
+    <AuthProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
@@ -22,6 +24,7 @@ const handleScan = (data) => {
         <Route path="/markattendance" element={<MarkAttendance />} />
       </Routes>
     </BrowserRouter>
+    </AuthProvider>
   )
 }
 

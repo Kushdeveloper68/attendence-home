@@ -140,7 +140,7 @@ async function handleStudentUser (req, res) {
         .status(500)
         .json({ success: false, message: 'Failed to register student' })
     // create and send jwt token to frontend
-    const token = jwt.sign({ user: newStudent, role: 'student' }, key, {
+    const token = jwt.sign({ user: newStudent, role: newStudent.role }, key, {
       expiresIn: '7d'
     })
     res.status(201).json({
@@ -174,7 +174,9 @@ async function handleTeacherUser (req, res) {
 
     
     // find teacher in the teacher saved database by thier uniqueid number
-    const existingTeacher = await TeacherSaved.findOne({ uniqueid })
+    const existingTeacher = await TeacherSaved.findOne({ 
+      uniqueid,
+     })
 
     if (!existingTeacher){
       return res
@@ -195,7 +197,7 @@ async function handleTeacherUser (req, res) {
     // check user
     if (!newTeacher)
       return res.status(500).json({ success: false, message: 'Failed to register teacher' })
-    const token = jwt.sign({ user: newTeacher, role: 'teacher' }, key, {
+    const token = jwt.sign({ user: newTeacher, role: newTeacher.role }, key, {
       expiresIn: '7d'
     })
 
@@ -218,9 +220,58 @@ async function handleTeacherUser (req, res) {
   }
 }
 
+async function handleUserLogin(req, res) {
+  try {
+    const { email, password } = req.body
+
+    // Find user by email
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Email and password are required' })
+    }
+    // Check in both StudentUser and TeacherUser collections
+    let user = await StudentUser.findOne({ email })
+    if (!user) {
+      user = await TeacherUser.findOne({ email })
+    }
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'Invalid email or password' })
+    }
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password)
+    if (!isMatch) {
+      return res.status(400).json({ success: false, message: 'Invalid email or password' })
+    }
+
+    // Create and send JWT token
+    const token = jwt.sign({ user: user, role: user.role }, key, {
+      expiresIn: '7d'
+    })
+
+    res.status(200).json({
+      success: true,
+      message: 'User logged in successfully',
+      user: {
+        name: user.name,
+        branch: user.branch,
+        semester: user.semester? user.semester : null,
+        enrollmentNumber: user.enrollmentNumber? user.enrollmentNumber : null,
+        uniqueid: user.uniqueid? user.uniqueid : null,
+        phone: user.phone,
+        email: user.email,
+        role: user.role
+      },
+      token
+    })
+  } catch (error) {
+    console.error('Error logging in user:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
 module.exports = {
   handleStudentUser,
   handleTeacherUser,
   handleSendOTP,
-  verifyOtpApi
+  verifyOtpApi,
+  handleUserLogin
 }
