@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -15,9 +15,6 @@ const user = localStorage.getItem("student") || localStorage.getItem("teacher");
   const [attendance, setAttendance] = useState(
     students.map(() => false)
   );
-
-  // Only allow marking attendance for the current user (one user, one attendance)
-  // If you want to allow only the logged-in student, filter students accordingly
 
   const handleCheckbox = (idx) => {
     setAttendance((prev) =>

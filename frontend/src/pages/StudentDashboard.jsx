@@ -1,15 +1,19 @@
 import "../styles/student.css"
 import { Navbar, Footer, ProfileCard } from '../components/';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useApi , scanQRApi} from "../apis/API"
+import { useApi, scanQRApi } from "../apis/API"
 import { Scanner } from '@yudiel/react-qr-scanner';
+import { BrowserQRCodeReader } from '@zxing/browser';
+
 export default function StudentDashboard() {
   const api = useApi()
   const navigator = useNavigate();
   const [parsedUser, setParsedUser] = useState({})
   const user = localStorage.getItem("student") || localStorage.getItem("teacher");
   const token = localStorage.getItem("token");
+
+  const fileInputRef = useRef();
 
   const [scanning, setScanning] = useState(false);
   const [qrData, setQrData] = useState({});
@@ -44,6 +48,50 @@ export default function StudentDashboard() {
     }
   };
 
+
+  // Handle QR image upload
+  const handleUploadQR = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const image = new Image();
+        image.src = e.target.result;
+        image.onload = async () => {
+          // Use zxing to decode QR from image
+          const codeReader = new BrowserQRCodeReader();
+          try {
+            const result = await codeReader.decodeFromImageElement(image);
+            if (result && result.text) {
+              // Same as scanning: parse and call backend
+              const qrObj = JSON.parse(result.text);
+              const response = await scanQRApi(qrObj);
+              if (response.success) {
+                navigator("/markattendance", {
+                  state: {
+                    students: response.students,
+                    branch: response.branch,
+                    semester: response.semester,
+                    subject: response.subject
+                  }
+                });
+              } else {
+                alert(response.message || "Failed to get student list.");
+              }
+            } else {
+              alert("No QR code found in image.");
+            }
+          } catch (err) {
+            alert("Invalid QR code or error processing.");
+          }
+        };
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      alert("Error reading QR code from image.");
+    }
+  };
 
   useEffect(() => {
     if (!user && !token) navigator("/");
@@ -109,11 +157,19 @@ export default function StudentDashboard() {
                       </div>
                     </div>
                   )}
-                  <button className='btn btn-student-secondary w-full'>
-                    <span className='material-symbols-outlined'>
-                      upload_file
-                    </span>
+                  <button
+                    className='btn btn-student-secondary w-full'
+                    onClick={() => fileInputRef.current.click()}
+                  >
+                    <span className='material-symbols-outlined'>upload_file</span>
                     Upload QR
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={fileInputRef}
+                      style={{ display: "none" }}
+                      onChange={handleUploadQR}
+                    />
                   </button>
                 </div>
               </div>
