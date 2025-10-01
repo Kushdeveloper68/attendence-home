@@ -93,7 +93,6 @@ export default function Signup() {
       if (signupRes.success) {
         setMsg("Signup successful! You can now log in.");
         setShowOtpBox(false);
-        // Optionally, redirect or clear form here
         if (signupRes.user.role === "student") {
           localStorage.setItem("student", JSON.stringify(signupRes.user));
           localStorage.setItem("token", signupRes.token);

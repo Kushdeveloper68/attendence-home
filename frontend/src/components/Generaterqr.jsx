@@ -5,7 +5,7 @@ import Footer from './Footer';
 const GenerateQR = () => {
   const [showQR, setShowQR] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
+    
   return (
     <div className="bg-[var(--light-gray-50)] flex min-h-screen flex-col">
       {/* Header */}
@@ -33,9 +33,11 @@ const GenerateQR = () => {
                   className="form-select appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--teal-500)] focus:border-[var(--teal-500)] transition"
                 >
                   <option>Select Branch</option>
-                  <option>Computer Science</option>
+                  <option>Computer Engineering</option>
                   <option>Mechanical Engineering</option>
-                  <option>Electronics & Communication</option>
+                  <option>Electrical Engineering</option>
+                  <option>Minning Engineering</option>
+                  <option>Civil Engineering</option>
                 </select>
               </div>
 

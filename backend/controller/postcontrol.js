@@ -4,6 +4,8 @@ const {
   TeacherSaved,
   TeacherUser
 } = require('../model')
+const QRCode = require('qrcode');
+const fs = require('fs');
 const bcrypt = require('bcryptjs')
 const nodemailer = require('nodemailer')
 const jwt = require('jsonwebtoken')
@@ -15,14 +17,10 @@ async function handleSendOTP (req, res) {
   const { email } = req.body
 
   if (!email) return res.json({ message: 'Email required' })
-
-  console.log(process.env.EMAIL, process.env.PASS)
-  console.log('Sending OTP to:', email)
   // Generate OTP
   const otp = Math.floor(100000 + Math.random() * 900000).toString()
   // Save OTP for verification (expires in 5 min)
   otpStore[email] = { otp, expires: Date.now() + 5 * 60 * 1000 }
-  console.log('Generated OTP:', otpStore[email])
   // Send email
   try {
     const transporter = nodemailer.createTransport({
@@ -75,17 +73,14 @@ async function handleSendOTP (req, res) {
 
 async function verifyOtpApi (req, res) {
   const { email, otp } = req.body
-  console.log('verifying otp for', email, otp)
-  console.log('otpStore:', otpStore)
   const storedOtp = otpStore[email]
-  console.log('storedOtp:', storedOtp)
   try {
     if (!storedOtp)
       return res.json({ success: false, message: 'OTP not found or expired' })
 
     if (storedOtp.otp === otp) {
       delete otpStore[email] // OTP verified, remove from store
-      return res.json({ success: true })
+      return res.json({ success: true , message: 'OTP verified successfully' })
     } else {
       return res.json({ success: false, message: 'Invalid OTP' })
     }
@@ -95,7 +90,9 @@ async function verifyOtpApi (req, res) {
   }
 }
 
-async function handleStudentUser (req, res) {
+
+
+async function handleStudentUser(req, res) {
   try {
     const { name, email, branch, password, semester, enrollment, phone, role } =
       req.body
@@ -161,27 +158,28 @@ async function handleStudentUser (req, res) {
     res.status(500).json({ success: false, message: 'Internal server error' })
   }
 }
+
+
 async function handleTeacherUser (req, res) {
   try {
     const { name, email, branch, password, uniqueid, phone ,role } = req.body
+    console.log(req.body)
     // You might want to add validation and hashing for the password here
     const existingTeacherUser = await TeacherUser.findOne({
         $or: [{email }, { uniqueid  }, { phone }]
     })
     if(existingTeacherUser) { 
-      return res.status(400).json({ success: false, message: 'Email or Unique ID or Phone already registered' })
+      return res.json({ success: false, message: 'Email or Unique ID or Phone already registered' })
     }
 
     
     // find teacher in the teacher saved database by thier uniqueid number
     const existingTeacher = await TeacherSaved.findOne({ 
-      uniqueid,
+     uniqueId: uniqueid,
      })
 
     if (!existingTeacher){
-      return res
-        .status(400)
-        .json({ success: false, message: 'Unique ID not found in records' })
+      return res.json({ success: false, message: 'Unique ID not found in records' })
     }
     const hashedPassword = await bcrypt.hash(password, 10)
     // create teacher user
@@ -190,13 +188,13 @@ async function handleTeacherUser (req, res) {
       email,
       branch,
       password: hashedPassword,
-      uniqueid,
+     uniqueId: uniqueid,
       phone,
       role
     })
     // check user
     if (!newTeacher)
-      return res.status(500).json({ success: false, message: 'Failed to register teacher' })
+      return res.json({ success: false, message: 'Failed to register teacher' })
     const token = jwt.sign({ user: newTeacher, role: newTeacher.role }, key, {
       expiresIn: '7d'
     })
@@ -208,7 +206,7 @@ async function handleTeacherUser (req, res) {
         name: newTeacher.name,
         email: newTeacher.email,
         branch: newTeacher.branch,
-        uniqueid: newTeacher.uniqueid,
+        uniqueid: newTeacher.uniqueId,
         phone: newTeacher.phone,
         role: newTeacher.role
       },
@@ -226,7 +224,7 @@ async function handleUserLogin(req, res) {
 
     // Find user by email
     if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'Email and password are required' })
+      return res.json({ success: false, message: 'Email and password are required' })
     }
     // Check in both StudentUser and TeacherUser collections
     let user = await StudentUser.findOne({ email })
@@ -234,12 +232,12 @@ async function handleUserLogin(req, res) {
       user = await TeacherUser.findOne({ email })
     }
     if (!user) {
-      return res.status(400).json({ success: false, message: 'Invalid email or password' })
+      return res.json({ success: false, message: 'Invalid email or password' })
     }
     // Check password
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) {
-      return res.status(400).json({ success: false, message: 'Invalid email or password' })
+      return res.json({ success: false, message: 'Invalid email or password' })
     }
 
     // Create and send JWT token
@@ -268,6 +266,43 @@ async function handleUserLogin(req, res) {
   }
 }
 
+
+async function handleGenerateOR(req , res) {
+
+// Hardcoded JSON data
+const userData = {
+  name: "Kush Pandit",
+  email: "kush@example.com",
+  password: "123456"
+};
+
+// Convert JSON to string
+const qrData = JSON.stringify(userData);
+
+// File name to save
+const filePath = __dirname + "/userQR.png";
+
+// Generate QR and save
+QRCode.toFile(
+  filePath,
+  qrData,
+  {
+    color: {
+      dark: "#000000",  // QR code color
+      light: "#ffffff"  // background
+    },
+    width: 300, // image size
+  },
+  (err) => {
+    if (err) {
+      console.error("❌ Error generating QR:", err);
+    } else {
+      console.log("✅ QR Code generated and saved at:", filePath);
+    }
+  }
+);
+
+}
 module.exports = {
   handleStudentUser,
   handleTeacherUser,

@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useState ,useEffect } from 'react'
 import { useLocation } from 'react-router-dom';
 
-function ProfileCard({ user }) {
+function ProfileCard() {
   const location = useLocation();
   const path = location.pathname;
-  const [parsedUser, setParsedUser] = React.useState(null);
+  const [parsedUser, setParsedUser] = useState({});
+const user = localStorage.getItem("student") || localStorage.getItem("teacher");
 
   useEffect(() => {
     if (typeof user === "string") {

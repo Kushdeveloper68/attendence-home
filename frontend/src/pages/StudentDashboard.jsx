@@ -1,28 +1,33 @@
 import "../styles/student.css"
-
-import {Navbar, Footer, ProfileCard} from '../components/';
-import { useEffect } from 'react';
+import { Navbar, Footer, ProfileCard } from '../components/';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {useApi} from "../apis/API"
-
-export default function StudentDashboard () {
+import { useApi } from "../apis/API"
+import { Scanner } from '@yudiel/react-qr-scanner';
+export default function StudentDashboard() {
   const api = useApi()
   const navigator = useNavigate();
-    const user = localStorage.getItem("student")|| localStorage.getItem("teacher");
-    const token = localStorage.getItem("token");
-useEffect(() => {
-  if(!user && !token) navigator("/");
-     const role = JSON.parse(user)?.role;
-     if (role !== "student") {
+  const [parsedUser, setParsedUser] = useState({})
+  const user = localStorage.getItem("student") || localStorage.getItem("teacher");
+  const token = localStorage.getItem("token");
+
+  const [scanning, setScanning] = useState(false);
+  const [qrData, setQrData] = useState("");
+
+  useEffect(() => {
+    if (!user && !token) navigator("/");
+    const role = JSON.parse(user)?.role;
+    setParsedUser(JSON.parse(user));
+    if (role !== "student") {
       navigator("/");
-     }
-   }, [user])
+    }
+  }, [user])
   return (
     <div className='relative flex min-h-screen flex-col bg-gray-100 font-poppins'>
       {/* Header */}
-      
+
       <Navbar />
-     
+
       {/* Main */}
       <main className='flex-grow container mx-auto px-6 py-8'>
         <h2 className='text-3xl font-bold text-navy mb-8'>Student Dashboard</h2>
@@ -30,7 +35,7 @@ useEffect(() => {
           <div className='lg:col-span-2 space-y-8'>
             {/* Profile Card */}
 
-            <ProfileCard user={user} />
+            <ProfileCard />
             {/* Actions & Attendance */}
             <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
               <div className='card p-6 flex flex-col items-center justify-center text-center'>
@@ -38,12 +43,47 @@ useEffect(() => {
                   Quick Actions
                 </h4>
                 <div className='flex flex-col sm:flex-row gap-4 w-full'>
-                  <button className='btn btn-student-primary w-full'>
-                    <span className='material-symbols-outlined'>
-                      qr_code_scanner
-                    </span>
-                    Scan QR
+                  <button
+                    onClick={() => setScanning(!scanning)}
+                    className="btn btn-student-primary w-full"
+                  >
+                    <span className="material-symbols-outlined">qr_code_scanner</span>
+                    {scanning ? "Stop Scanning" : "Scan QR"}
                   </button>
+                  {scanning && (
+                    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-80">
+                      <div className="w-full h-full flex flex-col items-center justify-center">
+                        <div className="w-full max-w-md mx-auto flex flex-col items-center">
+                          <p className="text-white text-lg font-semibold mb-4">Align the QR code within the frame</p>
+                          <div className="w-full aspect-square max-w-xs rounded-2xl overflow-hidden border-4 border-teal-400 shadow-lg bg-black">
+                            <Scanner
+                              onScan={(detectedCodes) => {
+                                if (detectedCodes.length > 0) {
+                                  const code = detectedCodes[0].rawValue;
+                                  setQrData(code);
+                                  console.log("Scanned QR:", code);
+                                  setScanning(false); // auto-stop after success
+                                }
+                              }}
+                              onError={(error) => console.error("QR Error:", error)}
+                              constraints={{ facingMode: "environment" }}
+                              scanDelay={500}
+                              styles={{
+                                container: { width: "100%", height: "100%" },
+                                video: { width: "100%", height: "100%", objectFit: "cover" }
+                              }}
+                            />
+                          </div>
+                          <button
+                            className="mt-6 px-6 py-2 rounded-lg bg-white text-teal-600 font-bold shadow hover:bg-teal-50 transition"
+                            onClick={() => setScanning(false)}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <button className='btn btn-student-secondary w-full'>
                     <span className='material-symbols-outlined'>
                       upload_file
@@ -92,9 +132,8 @@ useEffect(() => {
                 ].map((step, idx) => (
                   <div key={idx} className='flex items-start gap-4'>
                     <div
-                      className={`${
-                        idx % 2 === 0 ? 'bg-teal' : 'bg-orange'
-                      } text-white rounded-full p-3 flex-shrink-0`}
+                      className={`${idx % 2 === 0 ? 'bg-teal' : 'bg-orange'
+                        } text-white rounded-full p-3 flex-shrink-0`}
                     >
                       <span className='material-symbols-outlined'>
                         {idx === 0 && 'qr_code_scanner'}
@@ -142,7 +181,7 @@ useEffect(() => {
                     className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal focus:ring-teal sm:text-sm bg-gray-100'
                     id='name'
                     type='text'
-                    value='Sophia Carter'
+                    value={parsedUser.name}
                     readOnly
                   />
                 </div>
@@ -157,7 +196,7 @@ useEffect(() => {
                     className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal focus:ring-teal sm:text-sm bg-gray-100'
                     id='enrollment'
                     type='text'
-                    value='2021CS001'
+                    value={parsedUser.enrollmentNumber}
                     readOnly
                   />
                 </div>
@@ -189,7 +228,7 @@ useEffect(() => {
                     className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal focus:ring-teal sm:text-sm bg-gray-100'
                     id='semester'
                     type='text'
-                    value='4'
+                    value={parsedUser.semester}
                     readOnly
                   />
                 </div>
@@ -225,7 +264,7 @@ useEffect(() => {
         </div>
       </main>
       {/* Footer */}
-      <Footer/>
+      <Footer />
     </div>
   )
 }

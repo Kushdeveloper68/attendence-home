@@ -1,8 +1,27 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import "../styles/teacher.css"
 import {Navbar, Footer, ProfileCard} from '../components';
+import { useNavigate } from 'react-router-dom';
+import { useApi } from "../apis/API"
 
 export default function TeacherDashboard() {
+   const api = useApi()
+  const navigator = useNavigate();
+  const [parsedUser, setParsedUser] = useState({})
+  const user = localStorage.getItem("student") || localStorage.getItem("teacher");
+  const token = localStorage.getItem("token");
+
+console.log("user in teacherdashboard", user);
+console.log("token in teacherdashboard", token);
+    useEffect(() => {
+      if (!user && !token) navigator("/");
+      const role = JSON.parse(user)?.role;
+      setParsedUser(JSON.parse(user));
+      if (role !== "teacher") {
+        navigator("/");
+      }
+    }, [user])
+
   return (
     <div className="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden bg-[var(--light-gray)]" style={{ fontFamily: "'Poppins', 'Inter', sans-serif" }}>
       <div className="layout-container flex h-full grow flex-col">
