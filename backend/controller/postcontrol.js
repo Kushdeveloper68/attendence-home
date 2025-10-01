@@ -253,7 +253,7 @@ async function handleUserLogin(req, res) {
         branch: user.branch,
         semester: user.semester? user.semester : null,
         enrollmentNumber: user.enrollmentNumber? user.enrollmentNumber : null,
-        uniqueid: user.uniqueid? user.uniqueid : null,
+        uniqueid: user.uniqueId? user.uniqueId : null,
         phone: user.phone,
         email: user.email,
         role: user.role
@@ -266,47 +266,79 @@ async function handleUserLogin(req, res) {
   }
 }
 
+async function handleGenerateQR(req, res) {
+  // Get data from request body
+  const { branch, semester, subject } = req.body;
 
-async function handleGenerateOR(req , res) {
+  // Use these values for QR data
+  const userData = { branch, semester, subject };
+  const qrData = JSON.stringify(userData);
 
-// Hardcoded JSON data
-const userData = {
-  name: "Kush Pandit",
-  email: "kush@example.com",
-  password: "123456"
-};
+  try {
+    // Generate QR code as a PNG buffer
+    const qrBuffer = await QRCode.toBuffer(qrData, {
+      color: {
+        dark: "#000000",
+        light: "#ffffff"
+      },
+      width: 300
+    });
 
-// Convert JSON to string
-const qrData = JSON.stringify(userData);
+    // Send image as base64 string (easy for frontend to display)
+    const qrBase64 = qrBuffer.toString('base64');
+    res.json({
+      success: true,
+      qrImage: `data:image/png;base64,${qrBase64}`
+    });
 
-// File name to save
-const filePath = __dirname + "/userQR.png";
+    // Or, to send as an image directly:
+    // res.set('Content-Type', 'image/png');
+    // res.send(qrBuffer);
 
-// Generate QR and save
-QRCode.toFile(
-  filePath,
-  qrData,
-  {
-    color: {
-      dark: "#000000",  // QR code color
-      light: "#ffffff"  // background
-    },
-    width: 300, // image size
-  },
-  (err) => {
-    if (err) {
-      console.error("❌ Error generating QR:", err);
-    } else {
-      console.log("✅ QR Code generated and saved at:", filePath);
-    }
+  } catch (err) {
+    console.error("❌ Error generating QR:", err);
+    res.status(500).json({ success: false, message: "Error generating QR code" });
   }
-);
+}async function handleScanQR(req, res) {
+  const { branch, semester, subject } = req.body;
 
+  if (!branch || !semester || !subject) {
+    return res.json({ success: false, message: "All fields are required" });
+  }
+
+  try {
+    // Find all students with matching branch and semester
+    const students = await StudentSaved.find({ branch, semester });
+
+    if (!students || students.length === 0) {
+      return res.json({ success: false, message: "No students found" });
+    }
+
+    // Prepare student list for frontend (you can select only needed fields)
+    const studentList = students.map(student => ({
+      name: student.name,
+      enrollmentNumber: student.enrollmentNumber,
+    }));
+
+    res.json({
+      success: true,
+      message: "QR data processed successfully",
+      students: studentList,
+      branch,
+      semester,
+      subject
+    });
+  } catch (error) {
+    console.error("Error scanning QR:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
 }
 module.exports = {
   handleStudentUser,
   handleTeacherUser,
   handleSendOTP,
   verifyOtpApi,
-  handleUserLogin
+  handleUserLogin,
+  handleGenerateQR,
+  handleScanQR
 }

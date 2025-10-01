@@ -68,3 +68,23 @@ export const verifyOtpApi = async ({email , otp}) => {
     throw error;
   }
 }
+
+export const generateqrApi = async (data) => {
+  try {
+    const response = await API.post('/generate-qr', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error generating QR code:', error);
+    throw error;
+  }
+}
+
+export const scanQRApi = async (data) => {
+  try {
+    const response = await API.post('/scan-qr', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error scanning QR code:', error);
+    throw error;
+  }
+}

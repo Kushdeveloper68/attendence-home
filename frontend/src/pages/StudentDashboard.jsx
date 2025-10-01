@@ -2,7 +2,7 @@ import "../styles/student.css"
 import { Navbar, Footer, ProfileCard } from '../components/';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useApi } from "../apis/API"
+import { useApi , scanQRApi} from "../apis/API"
 import { Scanner } from '@yudiel/react-qr-scanner';
 export default function StudentDashboard() {
   const api = useApi()
@@ -12,7 +12,38 @@ export default function StudentDashboard() {
   const token = localStorage.getItem("token");
 
   const [scanning, setScanning] = useState(false);
-  const [qrData, setQrData] = useState("");
+  const [qrData, setQrData] = useState({});
+
+
+
+  const handleScan = async (detectedCodes) => {
+    if (detectedCodes.length > 0) {
+      const code = detectedCodes[0].rawValue;
+      setScanning(false);
+      try {
+        // Parse QR code data (should be JSON string)
+        const qrObj = JSON.parse(code);
+        // Call backend
+        const response = await scanQRApi(qrObj);
+        if (response.success) {
+          // Redirect to markattendance and pass data
+          navigator("/markattendance", {
+            state: {
+              students: response.students,
+              branch: response.branch,
+              semester: response.semester,
+              subject: response.subject
+            }
+          });
+        } else {
+          alert(response.message || "Failed to get student list.");
+        }
+      } catch (err) {
+        alert("Invalid QR code or error processing.");
+      }
+    }
+  };
+
 
   useEffect(() => {
     if (!user && !token) navigator("/");
@@ -22,6 +53,7 @@ export default function StudentDashboard() {
       navigator("/");
     }
   }, [user])
+
   return (
     <div className='relative flex min-h-screen flex-col bg-gray-100 font-poppins'>
       {/* Header */}
@@ -57,14 +89,7 @@ export default function StudentDashboard() {
                           <p className="text-white text-lg font-semibold mb-4">Align the QR code within the frame</p>
                           <div className="w-full aspect-square max-w-xs rounded-2xl overflow-hidden border-4 border-teal-400 shadow-lg bg-black">
                             <Scanner
-                              onScan={(detectedCodes) => {
-                                if (detectedCodes.length > 0) {
-                                  const code = detectedCodes[0].rawValue;
-                                  setQrData(code);
-                                  console.log("Scanned QR:", code);
-                                  setScanning(false); // auto-stop after success
-                                }
-                              }}
+                              onScan={handleScan}
                               onError={(error) => console.error("QR Error:", error)}
                               constraints={{ facingMode: "environment" }}
                               scanDelay={500}

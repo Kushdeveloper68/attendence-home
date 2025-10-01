@@ -1,22 +1,23 @@
 import React, { useState } from "react";
-import "../styles/markattendence.css"
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from './Navbar';
 import Footer from './Footer';
-const students = [
-  { name: "Sophia Clark", enroll: "2021CS001", present: false },
-  { name: "Ethan Carter", enroll: "2021CS002", present: true },
-  { name: "Olivia Reed", enroll: "2021CS003", present: false },
-  { name: "Liam Hayes", enroll: "2021CS004", present: true },
-  { name: "Ava Bennett", enroll: "2021CS005", present: false },
-  { name: "Noah Foster", enroll: "2021CS006", present: false },
-  { name: "Isabella Wright", enroll: "2021CS007", present: true },
-  { name: "Jackson Cole", enroll: "2021CS008", present: false },
-];
-
+import '../styles/markattendence.css';
 export default function MarkAttendance() {
+const user = localStorage.getItem("student") || localStorage.getItem("teacher");
+  const token = localStorage.getItem("token");
+  const [parsedUser, setParsedUser] = useState({})
+    const navigator = useNavigate();
+  const location = useLocation();
+  const { students = [], branch, semester, subject } = location.state || {};
+
+  // Track attendance for each student (default: false)
   const [attendance, setAttendance] = useState(
-    students.map((s) => s.present)
+    students.map(() => false)
   );
+
+  // Only allow marking attendance for the current user (one user, one attendance)
+  // If you want to allow only the logged-in student, filter students accordingly
 
   const handleCheckbox = (idx) => {
     setAttendance((prev) =>
@@ -25,55 +26,64 @@ export default function MarkAttendance() {
   };
 
   const handleSubmit = () => {
-    // You can send attendance data to backend here
+    // Send attendance data to backend here
     alert("Attendance submitted!");
   };
 
+
+  useEffect(() => {
+    if (!user && !token) navigator("/");
+    const role = JSON.parse(user)?.role;
+    setParsedUser(JSON.parse(user));
+    if (role !== "student") {
+      navigator("/");
+    }
+  }, [user])
+
   return (
-    <div className="relative flex size-full min-h-screen flex-col group/design-root bg-[var(--gray-100)] text-[var(--navy-900)]">
+    <div className="relative flex size-full min-h-screen flex-col bg-gray-100 text-navy-900">
       <Navbar />
-      {/* Main Content */}
       <main className="flex-grow container mx-auto px-6 py-8">
         <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
-          <h2 className="text-3xl font-bold text-[var(--navy-900)] mb-6">Mark Attendance</h2>
-          <div className="grid md:grid-cols-3 gap-6 mb-8 bg-[var(--teal-50)] p-6 rounded-lg border border-[var(--teal-100)]">
+          <h2 className="text-3xl font-bold mb-6">Mark Attendance</h2>
+          <div className="grid md:grid-cols-3 gap-6 mb-8 bg-teal-50 p-6 rounded-lg border border-teal-100">
             <div>
-              <p className="text-sm font-medium text-[var(--navy-700)]">Branch</p>
-              <p className="text-lg font-semibold text-[var(--navy-900)]">Computer Science</p>
+              <p className="text-sm font-medium text-navy-700">Branch</p>
+              <p className="text-lg font-semibold text-navy-900">{branch}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-[var(--navy-700)]">Semester</p>
-              <p className="text-lg font-semibold text-[var(--navy-900)]">4th</p>
+              <p className="text-sm font-medium text-navy-700">Semester</p>
+              <p className="text-lg font-semibold text-navy-900">{semester}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-[var(--navy-700)]">Subject</p>
-              <p className="text-lg font-semibold text-[var(--navy-900)]">Data Structures</p>
+              <p className="text-sm font-medium text-navy-700">Subject</p>
+              <p className="text-lg font-semibold text-navy-900">{subject}</p>
             </div>
           </div>
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="p-6">
-              <h3 className="text-xl font-bold text-[var(--navy-900)] mb-4">Student List</h3>
+              <h3 className="text-xl font-bold mb-4">Student List</h3>
             </div>
             <div className="table-container" style={{ maxHeight: "50vh", overflowY: "auto" }}>
               <table className="w-full">
-                <thead className="bg-[var(--gray-100)] sticky top-0">
+                <thead>
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-[var(--navy-700)] uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-[var(--navy-700)] uppercase tracking-wider">Enrollment No.</th>
-                    <th className="px-6 py-3 text-center text-xs font-bold text-[var(--navy-700)] uppercase tracking-wider w-24">Present</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold uppercase">Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold uppercase">Enrollment No.</th>
+                    <th className="px-6 py-3 text-center text-xs font-bold uppercase w-24">Present</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--gray-200)]">
+                <tbody>
                   {students.map((student, idx) => (
-                    <tr key={student.enroll} className="hover:bg-[var(--teal-50)] transition-colors duration-200">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--gray-800)]">{student.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--gray-600)]">{student.enroll}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-center">
+                    <tr key={student.enrollmentNumber}>
+                      <td className="px-6 py-4">{student.name}</td>
+                      <td className="px-6 py-4">{student.enrollmentNumber}</td>
+                      <td className="px-6 py-4 text-center">
                         <input
-                          className="h-5 w-5 checkbox-custom focus:ring-2 focus:ring-[var(--teal-500)] focus:ring-offset-2"
                           type="checkbox"
                           checked={attendance[idx]}
                           onChange={() => handleCheckbox(idx)}
+                          disabled={attendance.some((val, i) => i !== idx && val)} // Only one user can mark attendance
                         />
                       </td>
                     </tr>
@@ -86,14 +96,13 @@ export default function MarkAttendance() {
       </main>
       <div className="flex justify-end px-6 pb-6">
         <button
-          className="btn-submit flex items-center gap-2 rounded-full h-14 px-8 bg-[var(--teal-500)] text-white text-base font-bold hover:bg-[var(--teal-600)] transition-all"
+          className="btn-submit flex items-center gap-2 rounded-full h-14 px-8 bg-teal-500 text-white font-bold hover:bg-teal-600 transition-all"
           onClick={handleSubmit}
         >
           <span>Submit Attendance</span>
-          <span className="material-symbols-outlined">arrow_forward</span>
         </button>
       </div>
-     <Footer/>
+      <Footer />
     </div>
-    );
+  );
 }

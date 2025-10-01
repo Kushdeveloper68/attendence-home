@@ -10,7 +10,7 @@ export default function TeacherDashboard() {
   const [parsedUser, setParsedUser] = useState({})
   const user = localStorage.getItem("student") || localStorage.getItem("teacher");
   const token = localStorage.getItem("token");
-
+  
 console.log("user in teacherdashboard", user);
 console.log("token in teacherdashboard", token);
     useEffect(() => {
@@ -45,7 +45,8 @@ console.log("token in teacherdashboard", token);
                   <h3 className="text-2xl font-bold mb-2">Generate Attendance QR Code</h3>
                   <p className="text-gray-200 mb-6">Quickly generate a QR code for your class attendance. Students can scan it
                     to mark their presence.</p>
-                  <button
+                  <button 
+                  onClick={() => navigator("/generateqr")}
                     className="btn-primary font-semibold py-3 px-6 rounded-lg inline-flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all">
                     <span className="material-symbols-outlined">qr_code_2</span>
                     Generate QR Code

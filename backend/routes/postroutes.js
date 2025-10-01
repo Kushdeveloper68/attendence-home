@@ -1,10 +1,20 @@
-const {handleStudentUser, handleTeacherUser,handleSendOTP, verifyOtpApi , handleUserLogin} = require('../controller/postcontrol');
-const express = require('express');
-const postRouter = express.Router();
+const {
+  handleStudentUser,
+  handleTeacherUser,
+  handleSendOTP,
+  verifyOtpApi,
+  handleUserLogin,
+  handleGenerateQR,
+  handleScanQR
+} = require('../controller/postcontrol')
+const express = require('express')
+const postRouter = express.Router()
 
-postRouter.post('/signup/student', handleStudentUser);
-postRouter.post('/signup/teacher', handleTeacherUser);
-postRouter.post('/send-otp', handleSendOTP);
-postRouter.post('/verify-otp', verifyOtpApi);
-postRouter.post('/login', handleUserLogin);
-module.exports = postRouter;
+postRouter.post('/signup/student', handleStudentUser)
+postRouter.post('/signup/teacher', handleTeacherUser)
+postRouter.post('/send-otp', handleSendOTP)
+postRouter.post('/verify-otp', verifyOtpApi)
+postRouter.post('/login', handleUserLogin)
+postRouter.post('/generate-qr', handleGenerateQR)
+postRouter.post('/scan-qr', handleScanQR)
+module.exports = postRouter

@@ -1,38 +1,105 @@
-import React, { useState } from "react";
-import  "../styles/generateqr.css"
+import React, { useState, useEffect } from "react";
+import "../styles/generateqr.css";
 import Navbar from './Navbar';
 import Footer from './Footer';
+import { useNavigate } from 'react-router-dom';
+import { useApi, generateqrApi } from "../apis/API";
+
 const GenerateQR = () => {
+  const api = useApi();
+  const navigator = useNavigate();
+  const [parsedUser, setParsedUser] = useState({});
   const [showQR, setShowQR] = useState(false);
   const [showModal, setShowModal] = useState(false);
-    
+  const [branch, setBranch] = useState("");
+  const [semester, setSemester] = useState("");
+  const [subject, setSubject] = useState("");
+  const [qrImage, setQrImage] = useState(""); // <-- store QR from backend
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const user = localStorage.getItem("student") || localStorage.getItem("teacher");
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    if (!user && !token) navigator("/");
+    const role = JSON.parse(user)?.role;
+    setParsedUser(JSON.parse(user));
+    if (role !== "teacher") {
+      navigator("/");
+    }
+  }, [user, token]);
+
+  // Generate QR and get image from backend
+  const handleGenerateQR = async () => {
+    setLoading(true);
+    setErrorMsg("");
+    setQrImage("");
+    try {
+      const response = await generateqrApi({ branch, semester, subject });
+      if (response.success) {
+        setQrImage(response.qrImage);
+        setShowQR(true);
+      } else {
+        setErrorMsg(response.message || "Failed to generate QR code.");
+      }
+    } catch (error) {
+      setErrorMsg("Error generating QR code.");
+    }
+    setLoading(false);
+  };
+
+  // Download QR image
+  const handleDownload = () => {
+    if (!qrImage) return;
+    const link = document.createElement("a");
+    link.href = qrImage;
+    link.download = "attendance-qr.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Share QR image (Web Share API)
+  const handleShare = async () => {
+    if (!qrImage) return;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "Attendance QR Code",
+          text: "Scan this QR code to mark attendance.",
+          url: qrImage
+        });
+      } else {
+        alert("Sharing is not supported on this device/browser.");
+      }
+    } catch (err) {
+      alert("Error sharing QR code.");
+    }
+  };
+
   return (
     <div className="bg-[var(--light-gray-50)] flex min-h-screen flex-col">
-      {/* Header */}
       <Navbar />
-      {/* Main */}
       <main className="flex-grow container mx-auto px-6 py-12">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-4xl font-bold text-center text-[var(--navy-800)] mb-10">
             Generate Attendance QR
           </h2>
-
           {/* Form */}
           <div className="bg-white rounded-xl shadow-lg p-8 mb-10">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div>
-                <label
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                  htmlFor="branch"
-                >
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="branch">
                   Branch
                 </label>
                 <select
                   id="branch"
                   name="branch"
+                  value={branch}
+                  onChange={(e) => setBranch(e.target.value)}
                   className="form-select appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--teal-500)] focus:border-[var(--teal-500)] transition"
                 >
-                  <option>Select Branch</option>
+                  <option value="">Select Branch</option>
                   <option>Computer Engineering</option>
                   <option>Mechanical Engineering</option>
                   <option>Electrical Engineering</option>
@@ -40,31 +107,25 @@ const GenerateQR = () => {
                   <option>Civil Engineering</option>
                 </select>
               </div>
-
               <div>
-                <label
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                  htmlFor="semester"
-                >
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="semester">
                   Semester
                 </label>
                 <select
                   id="semester"
                   name="semester"
+                  value={semester}
+                  onChange={(e) => setSemester(e.target.value)}
                   className="form-select appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--teal-500)] focus:border-[var(--teal-500)] transition"
                 >
-                  <option>Select Semester</option>
+                  <option value="">Select Semester</option>
                   {[...Array(8)].map((_, i) => (
                     <option key={i}>{i + 1}st</option>
                   ))}
                 </select>
               </div>
-
               <div>
-                <label
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                  htmlFor="subject"
-                >
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="subject">
                   Subject
                 </label>
                 <input
@@ -72,28 +133,32 @@ const GenerateQR = () => {
                   id="subject"
                   name="subject"
                   placeholder="Enter Subject"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--teal-500)] focus:border-[var(--teal-500)] transition"
                 />
               </div>
             </div>
-
             <div className="text-center">
               <button
-                onClick={() => setShowQR(true)}
+                onClick={handleGenerateQR}
                 className="btn-generateqr-primary font-bold py-4 px-10 text-lg rounded-lg shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all"
+                disabled={loading}
               >
-                Generate QR Code
+                {loading ? "Generating..." : "Generate QR Code"}
               </button>
+              {errorMsg && (
+                <div className="mt-4 text-red-600 font-semibold">{errorMsg}</div>
+              )}
             </div>
           </div>
-
           {/* QR Card */}
-          {showQR && (
+          {showQR && qrImage && (
             <div className="bg-white rounded-xl shadow-lg p-8 text-center animate-fade-in">
               <img
                 alt="QR Code"
-                className="mx-auto mb-6 rounded-lg ring-4 ring-[var(--light-gray-200)] p-2"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUeNosSrxDHPWf7ff9Sg9wKA6f435DJub-dpXZPluATRXENk7oYDLLHXJMvmtO_ino1jIAZp269vY-4cd9FsQl1ZWt9WZjej3uLhOogKn4JdbKJYigJVzDA3rhafDUUJwM4R7WtHPuue_QlaGLpB9vewsnHkV3_n_UCziWNRF0a4QcICDD39Red54eM1Je_9ZsglEzUeQEDoMoqF8qMvxfkf9LziF_oh5SG97ppBywKBwaRbt0pDjBZmRdusXikzxZbHfORjeTuA"
+                className="mx-auto mb-6 rounded-lg ring-4 ring-[var(--light-gray-200)] p-2 bg-white"
+                src={qrImage}
               />
               <h3 className="text-2xl font-bold text-[var(--navy-800)] mb-2">
                 Your QR Code is Ready!
@@ -103,13 +168,16 @@ const GenerateQR = () => {
               </p>
               <div className="flex justify-center items-center gap-4">
                 <button
-                  onClick={() => setShowModal(true)}
+                  onClick={handleDownload}
                   className="btn-generateqr-secondary flex items-center gap-2 font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all"
                 >
                   <span className="material-symbols-outlined">download</span>
                   Download
                 </button>
-                <button className="bg-gray-200 text-gray-800 flex items-center gap-2 font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all">
+                <button
+                  onClick={handleShare}
+                  className="bg-gray-200 text-gray-800 flex items-center gap-2 font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all"
+                >
                   <span className="material-symbols-outlined">share</span>
                   Share
                 </button>
@@ -118,12 +186,9 @@ const GenerateQR = () => {
           )}
         </div>
       </main>
-
-      {/* Footer */}
-      <Footer/>
-
-      {/* Modal */}
-      {showModal && (
+      <Footer />
+      {/* Modal (optional, for preview/download) */}
+      {showModal && qrImage && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           onClick={(e) => e.target.classList.contains("fixed") && setShowModal(false)}
@@ -141,9 +206,12 @@ const GenerateQR = () => {
             <img
               alt="QR Code Preview"
               className="mx-auto mb-6 rounded-lg"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPgY29NJUpbdyaaU0JNf84TMyi3x1ZaTJKILMODUjDwEPutt1tZFueCQzWTQmnKvFohvFsxNNa2nZWdSh0T4-KC3uIU_cxnQ-NtHOQEg9JPdxlHkptHs-jLQUM_geBzwUn4BSnvXLdjSd8ly3VxlG7QgiPEuSwh4MSOP-3_utfIRa-BtZLwDNRlbY999_437CjqhipzWp_Mn7dpySt7NUToh8ojIgU3Y1j0aYdd6VW_0E7S4vAE8LVxO08XqqsSyVnfV0wfa1EoQ"
+              src={qrImage}
             />
-            <button className="btn-generateqr-primary font-bold py-3 px-8 text-base rounded-lg shadow-md hover:shadow-xl transition-all">
+            <button
+              className="btn-generateqr-primary font-bold py-3 px-8 text-base rounded-lg shadow-md hover:shadow-xl transition-all"
+              onClick={handleDownload}
+            >
               Confirm Download
             </button>
           </div>

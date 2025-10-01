@@ -67,7 +67,7 @@ const user = localStorage.getItem("student") || localStorage.getItem("teacher");
                   <div>
                     <h3 className="text-2xl font-bold text-navy">{parsedUser.name}</h3>
                     <p className="text-gray-600">Branch: <span className="font-medium text-gray-800">{parsedUser.branch}</span></p>
-                    <p className="text-gray-600">Unique No: <span className="font-medium text-gray-800">{parsedUser.uniqueId}</span></p>
+                    <p className="text-gray-600">Unique No: <span className="font-medium text-gray-800">{parsedUser.uniqueid}</span></p>
                   </div>
                 </div>
               </div>);
