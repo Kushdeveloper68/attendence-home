@@ -2,7 +2,8 @@ const {
   StudentSaved,
   StudentUser,
   TeacherSaved,
-  TeacherUser
+  TeacherUser,
+  AttendenceSchema
 } = require('../model')
 const QRCode = require('qrcode');
 const fs = require('fs');
@@ -71,6 +72,10 @@ async function handleSendOTP (req, res) {
   }
 }
 
+
+
+
+
 async function verifyOtpApi (req, res) {
   const { email, otp } = req.body
   const storedOtp = otpStore[email]
@@ -89,6 +94,8 @@ async function verifyOtpApi (req, res) {
     res.status(500).json({ success: false, message: 'Internal server error' })
   }
 }
+
+
 
 
 
@@ -132,7 +139,17 @@ async function handleStudentUser(req, res) {
       phone,
       role
     })
-    if (!newStudent)
+
+
+    const studentAttendanceRecord = await AttendenceSchema.create({
+      name,
+      email,
+      enrollmentNumber: enrollment,
+      semester,
+      branch
+    })
+
+    if (!newStudent || !studentAttendanceRecord)
       return res
         .status(500)
         .json({ success: false, message: 'Failed to register student' })
@@ -158,6 +175,9 @@ async function handleStudentUser(req, res) {
     res.status(500).json({ success: false, message: 'Internal server error' })
   }
 }
+
+
+
 
 
 async function handleTeacherUser (req, res) {
@@ -218,6 +238,10 @@ async function handleTeacherUser (req, res) {
   }
 }
 
+
+
+
+
 async function handleUserLogin(req, res) {
   try {
     const { email, password } = req.body
@@ -266,55 +290,59 @@ async function handleUserLogin(req, res) {
   }
 }
 
-async function handleGenerateQR(req, res) {
-  // Get data from request body
-  const { branch, semester, subject } = req.body;
 
-  // Use these values for QR data
-  const userData = { branch, semester, subject };
+
+
+
+
+async function handleGenerateQR(req, res) {
+  const { branch, semester, subject, teacherName } = req.body;
+
+  // Set expiry time (current time + 15 minutes)
+  const expires = Date.now() + 15 * 60 * 1000;
+  
+  // Include expiry in QR data
+  const userData = { branch, semester, subject, teacherName, expires };
   const qrData = JSON.stringify(userData);
 
   try {
-    // Generate QR code as a PNG buffer
     const qrBuffer = await QRCode.toBuffer(qrData, {
-      color: {
-        dark: "#000000",
-        light: "#ffffff"
-      },
+      color: { dark: "#000000", light: "#ffffff" },
       width: 300
     });
 
-    // Send image as base64 string (easy for frontend to display)
     const qrBase64 = qrBuffer.toString('base64');
     res.json({
       success: true,
       qrImage: `data:image/png;base64,${qrBase64}`
     });
-
-    // Or, to send as an image directly:
-    // res.set('Content-Type', 'image/png');
-    // res.send(qrBuffer);
-
   } catch (err) {
     console.error("❌ Error generating QR:", err);
     res.status(500).json({ success: false, message: "Error generating QR code" });
   }
-}async function handleScanQR(req, res) {
-  const { branch, semester, subject } = req.body;
+}
 
-  if (!branch || !semester || !subject) {
+
+
+async function handleScanQR(req, res) {
+  const { branch, semester, subject, expires , teacherName} = req.body;
+
+  if (!branch || !semester || !subject || !expires || !teacherName) {
     return res.json({ success: false, message: "All fields are required" });
   }
 
-  try {
-    // Find all students with matching branch and semester
-    const students = await StudentSaved.find({ branch, semester });
+  // Check expiry
+  if (Date.now() > expires) {
+    return res.json({ success: false, message: "QR code has expired" });
+  }
 
+  try {
+    const students = await StudentSaved.find({ branch, semester });
     if (!students || students.length === 0) {
       return res.json({ success: false, message: "No students found" });
     }
 
-    // Prepare student list for frontend (you can select only needed fields)
+
     const studentList = students.map(student => ({
       name: student.name,
       enrollmentNumber: student.enrollmentNumber,
@@ -326,13 +354,58 @@ async function handleGenerateQR(req, res) {
       students: studentList,
       branch,
       semester,
-      subject
+      subject,
+      teacherName,
+      expires
     });
   } catch (error) {
     console.error("Error scanning QR:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 }
+
+// 📌 Handle student attendance
+async function handleStudentAttendance(req, res) {
+  try {
+    const { enrollmentNumber, subject, teacherName, status, expires } = req.body;
+    console.log("handle attendence", req.body);
+    if (!enrollmentNumber || !subject || !teacherName || !status || !expires) {
+      return res.json({ message: "All fields are required" });
+    }
+
+    // Find student by enrollment number
+    const student = await AttendenceSchema.findOne({ enrollmentNumber });
+    if (!student) {
+      return res.json({ message: "Student not found, attendance not marked" });
+    }
+
+    // Check if attendance for this QR (expires) already exists
+    const alreadyMarked = student.attendance.some(entry => entry.expires === expires);
+    if (alreadyMarked) {
+      return res.json({ message: "Attendance already marked for this QR code." });
+    }
+
+    // Push new attendance entry into student's attendance array
+    student.attendance.push({
+      subject,
+      teacherName,
+      status,
+      expires
+    });
+
+    await student.save();
+
+    return res.status(200).json({
+      message: "Attendance marked successfully ✅",
+    });
+  } catch (error) {
+    console.error("Error in handleStudentAttendance:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+module.exports = { handleStudentAttendance };
+
 module.exports = {
   handleStudentUser,
   handleTeacherUser,
@@ -340,5 +413,6 @@ module.exports = {
   verifyOtpApi,
   handleUserLogin,
   handleGenerateQR,
-  handleScanQR
+  handleScanQR, 
+  handleStudentAttendance
 }

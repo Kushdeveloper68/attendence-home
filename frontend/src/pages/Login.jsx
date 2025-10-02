@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { loginApi } from "../apis/API";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , Link } from 'react-router-dom';
 
 export default function Login() {
  
@@ -155,8 +155,9 @@ export default function Login() {
                 className="text-sm font-medium text-[var(--navy)] hover:text-[var(--teal)] hover:underline transition"
               >
                 Forgot Password?
-              </a>
+              </a> <br />
             </div>
+             <p className="text-sm font-medium text-center">Don't have any account? <Link to="/signup" className="text-[var(--teal)] hover:underline">Register</Link></p>
 
             {/* Submit */}
             <div>

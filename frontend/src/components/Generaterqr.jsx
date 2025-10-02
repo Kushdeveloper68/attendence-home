@@ -14,7 +14,7 @@ const GenerateQR = () => {
   const [branch, setBranch] = useState("");
   const [semester, setSemester] = useState("");
   const [subject, setSubject] = useState("");
-  const [qrImage, setQrImage] = useState(""); // <-- store QR from backend
+  const [qrImage, setQrImage] = useState(""); // URL or base64 string of the QR image
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const user = localStorage.getItem("student") || localStorage.getItem("teacher");
@@ -35,7 +35,7 @@ const GenerateQR = () => {
     setErrorMsg("");
     setQrImage("");
     try {
-      const response = await generateqrApi({ branch, semester, subject });
+      const response = await generateqrApi({ branch, semester, subject , teacherName:parsedUser.name});
       if (response.success) {
         setQrImage(response.qrImage);
         setShowQR(true);

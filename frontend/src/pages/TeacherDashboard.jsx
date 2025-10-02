@@ -100,7 +100,7 @@ console.log("token in teacherdashboard", token);
               </div>
             </div>
             {/* How to Use Card */}
-            <div className="lg:col-span-1 space-y-8">
+            <div className="lg:col-span-1 space-y-8" id="how-to-use">
               <div className="card p-6">
                 <h3 className="text-xl font-bold text-[var(--dark-text)] mb-4">How to Use</h3>
                 <div className="space-y-6">

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link, Navigate ,useLocation} from 'react-router-dom'
-
+  const user = localStorage.getItem("student") || localStorage.getItem("teacher");
+  const token = localStorage.getItem("token");
 function Navbar() {
     const location = useLocation();
     switch (location.pathname) {
@@ -25,24 +26,24 @@ function Navbar() {
                 <Link className="text-[var(--dark-text)] text-base font-medium hover:text-[var(--primary-teal)] transition-colors"
                   to="/teacherdashboard">Dashboard</Link>
                 <Link className="text-[var(--light-text)] text-base font-medium hover:text-[var(--primary-teal)] transition-colors"
-                  to="/courses">Courses</Link>
+                  to="http://gpbhuj.ac.in/">Collage Web</Link>
                 <Link className="text-[var(--light-text)] text-base font-medium hover:text-[var(--primary-teal)] transition-colors"
-                  to="/attendance">Attendance</Link>
+                  to="/term">Term & Conditions</Link>
                 <Link className="text-[var(--light-text)] text-base font-medium hover:text-[var(--primary-teal)] transition-colors"
-                  to="/reports">Reports</Link>
-                <Link className="text-[var(--light-text)] text-base font-medium hover:text-[var(--primary-teal)] transition-colors"
-                  to="/settings">Settings</Link>
+                  to="/generateqr">Generate QR</Link>
+                  <button className="text-[var(--light-text)] text-base font-medium hover:text-[var(--primary-teal)] transition-colors"
+                  onClick={() => {
+                    localStorage.removeItem("student");
+                    localStorage.removeItem("teacher");
+                    localStorage.removeItem("token");
+                    window.location.href = "/";
+                  }}>Logout</button>
               </nav>
               <div className="flex items-center gap-4">
-                <button
-                  className="relative rounded-full p-2 text-[var(--light-text)] hover:bg-gray-100 hover:text-[var(--primary-navy)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-teal)] transition-all">
-                  <span className="material-symbols-outlined">notifications</span>
-                </button>
                 <div className="relative">
                   <button className="flex items-center gap-2">
                     <img alt="Profile" className="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-10 w-10"
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuDu_nwaSyxxwk01AwSEq1CPChFK21_9REKi7yCvq-b3mJ3d_xoyf97CmXA_XW3AHGG8HZoL2BKPIRkxI5DLQrW2FdEjzDVlX-wdNRg1UK6k_O1chJgE-1RKy8wJd6r9a0Lx-9uQ19JVlZJh3gm1uXntJhV9UdLdao-5cawHVUyy-wEUDN2vwYF2MwgZ9oFwl2PlXOaTabwyldMnHirEqESb_uGIWZUXtuMc9xv3j_tCWgSG4upyBHq0iGuJ_0G9wmCAzu2R7yyUSw" />
-                    <span className="material-symbols-outlined text-[var(--light-text)]">expand_more</span>
                   </button>
                 </div>
               </div>
@@ -65,21 +66,25 @@ function Navbar() {
             >
               <path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z'></path>
             </svg>
-            <h1 className='text-2xl font-bold text-navy'>EduTrack</h1>
+            <h1 className='text-2xl font-bold text-navy'>Attendance home</h1>
           </div>
           <div className='hidden md:flex items-center gap-8 font-medium text-gray-600'>
-            <Link className='hover:text-teal' to='#'>
+            <Link className='hover:text-teal' to='/studentdashboard'>
               Dashboard
             </Link>
-            <Link className='hover:text-teal' to='#'>
-              Attendance
+            <Link className='hover:text-teal' to='/term'>
+              Term & Conditions
             </Link>
-            <Link className='hover:text-teal' to='#'>
-              Courses
+            <Link className='hover:text-teal' to='#how-to-use'>
+             How to use?
             </Link>
-            <Link className='hover:text-teal' to='#'>
-              Profile
-            </Link>
+             <button className="text-[var(--light-text)] text-base font-medium hover:text-[var(--primary-teal)] transition-colors"
+                  onClick={() => {
+                    localStorage.removeItem("student");
+                    localStorage.removeItem("teacher");
+                    localStorage.removeItem("token");
+                    window.location.href = "/";
+                  }}>Logout</button>
           </div>
           <div className='flex items-center gap-4'>
             <div className='relative group'>
@@ -92,32 +97,9 @@ function Navbar() {
                   }}
                 ></div>
                 <span className='font-semibold text-gray-800 hidden md:block'>
-                  Sophia C.
-                </span>
-                <span className='material-symbols-outlined text-gray-600'>
-                  expand_more
+                  {JSON.parse(user)?.name || "User"}
                 </span>
               </button>
-              <div className='absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 hidden group-hover:block'>
-                <a
-                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                  href='#'
-                >
-                  My Profile
-                </a>
-                <a
-                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                  href='#'
-                >
-                  Settings
-                </a>
-                <a
-                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                  href='#'
-                >
-                  Logout
-                </a>
-              </div>
             </div>
           </div>
         </nav>
@@ -149,14 +131,14 @@ function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center gap-8">
-            {["Dashboard", "Courses", "Attendance", "Reports", "Settings"].map(
+            {[{ redirect:"/teacherdashboard", title:"Dashboard"}, { redirect:"/term", title:"Term & Condition"}, { redirect:"/teacherdashboard", title:"How to use?"}].map(
               (item) => (
                 <a
-                  key={item}
+                  key={item.redirect}
                   className="text-gray-600 hover:text-[var(--teal-500)] font-medium"
-                  href="#"
+                  href={item.redirect}
                 >
-                  {item}
+                  {item.title}
                 </a>
               )
             )}
@@ -192,16 +174,10 @@ function Navbar() {
             <h1 className="text-xl font-bold text-[var(--navy-900)]">Attendance Home</h1>
           </div>
           <div className="hidden md:flex items-center gap-8">
-            <a className="text-sm font-medium text-[var(--gray-600)] hover:text-[var(--teal-500)] transition-colors" href="#">Dashboard</a>
-            <a className="text-sm font-medium text-[var(--gray-600)] hover:text-[var(--teal-500)] transition-colors" href="#">Courses</a>
-            <a className="text-sm font-bold text-[var(--teal-500)]" href="#">Attendance</a>
-            <a className="text-sm font-medium text-[var(--gray-600)] hover:text-[var(--teal-500)] transition-colors" href="#">Profile</a>
-          </div>
+            <a className="text-sm font-medium text-[var(--gray-600)] hover:text-[var(--teal-500)] transition-colors" href="/studentdashboard">Dashboard</a>
+            <a className="text-sm font-medium text-[var(--gray-600)] hover:text-[var(--teal-500)] transition-colors" href="/term">Term & Condition</a>
+  </div>
           <div className="flex items-center gap-4">
-            <button className="relative text-[var(--gray-600)] hover:text-[var(--teal-500)] transition-colors">
-              <span className="material-symbols-outlined">notifications</span>
-              <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-[var(--orange-500)]"></span>
-            </button>
             <div
               className="w-10 h-10 rounded-full bg-cover bg-center"
               style={{

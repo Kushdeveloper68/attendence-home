@@ -88,3 +88,13 @@ export const scanQRApi = async (data) => {
     throw error;
   }
 }
+
+export const markAttendanceApi = async (data) => {
+  try {
+    const response = await API.post('/mark-attendance', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error marking attendance:', error);
+    throw error;
+  }
+};

@@ -36,7 +36,9 @@ export default function StudentDashboard() {
               students: response.students,
               branch: response.branch,
               semester: response.semester,
-              subject: response.subject
+              subject: response.subject,
+              teacherName: response.teacherName,
+              expires: response.expires
             }
           });
         } else {
@@ -73,7 +75,9 @@ export default function StudentDashboard() {
                     students: response.students,
                     branch: response.branch,
                     semester: response.semester,
-                    subject: response.subject
+                    subject: response.subject,
+                    teacherName: response.teacherName,
+                    expires: response.expires
                   }
                 });
               } else {
@@ -202,7 +206,7 @@ export default function StudentDashboard() {
             </div>
 
             {/* How to Use */}
-            <div className='card p-6'>
+            <div className='card p-6' id="how-to-use">
               <h3 className='text-2xl font-bold text-navy mb-6'>How to Use</h3>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 {[
