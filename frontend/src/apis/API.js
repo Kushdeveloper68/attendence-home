@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/authcontext';
 const API = axios.create({
   baseURL: 'http://localhost:5000/', // Update with your backend API URL
   withCredentials: true,

@@ -133,13 +133,13 @@ function Navbar() {
           <div className="hidden md:flex items-center gap-8">
             {[{ redirect:"/teacherdashboard", title:"Dashboard"}, { redirect:"/term", title:"Term & Condition"}, { redirect:"/teacherdashboard", title:"How to use?"}].map(
               (item) => (
-                <a
+                <Link
                   key={item.redirect}
                   className="text-gray-600 hover:text-[var(--teal-500)] font-medium"
-                  href={item.redirect}
+                  to={item.redirect}
                 >
                   {item.title}
-                </a>
+                </Link>
               )
             )}
           </div>
@@ -174,8 +174,8 @@ function Navbar() {
             <h1 className="text-xl font-bold text-[var(--navy-900)]">Attendance Home</h1>
           </div>
           <div className="hidden md:flex items-center gap-8">
-            <a className="text-sm font-medium text-[var(--gray-600)] hover:text-[var(--teal-500)] transition-colors" href="/studentdashboard">Dashboard</a>
-            <a className="text-sm font-medium text-[var(--gray-600)] hover:text-[var(--teal-500)] transition-colors" href="/term">Term & Condition</a>
+            <Link className="text-sm font-medium text-[var(--gray-600)] hover:text-[var(--teal-500)] transition-colors" to="/studentdashboard">Dashboard</Link>
+            <Link className="text-sm font-medium text-[var(--gray-600)] hover:text-[var(--teal-500)] transition-colors" to="/term">Term & Condition</Link>
   </div>
           <div className="flex items-center gap-4">
             <div
@@ -207,18 +207,18 @@ function Navbar() {
             <h1 className='text-2xl font-bold text-navy'>Attendance Home</h1>
           </div>
           <div className='hidden md:flex items-center gap-8 font-medium text-gray-600'>
-            <a className='hover:text-teal' href='#'>
+            <a className='hover:text-teal' to='#'>
               Dashboard
             </a>
-            <a className='hover:text-teal' href='#'>
+            <Link className='hover:text-teal' to='#'>
               Attendance
-            </a>
-            <a className='hover:text-teal' href='#'>
+            </Link>
+            <Link className='hover:text-teal' to='#'>
               Courses
-            </a>
-            <a className='hover:text-teal' href='#'>
+            </Link>
+            <Link className='hover:text-teal' to='#'>
               Profile
-            </a>
+            </Link>
           </div>
           <div className='flex items-center gap-4'>
             <div className='relative group'>

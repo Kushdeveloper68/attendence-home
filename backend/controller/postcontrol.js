@@ -368,9 +368,22 @@ async function handleScanQR(req, res) {
 async function handleStudentAttendance(req, res) {
   try {
     const { enrollmentNumber, subject, teacherName, status, expires } = req.body;
-    console.log("handle attendence", req.body);
+    const ipInfo = req.ipInfo; // Retrieved from ipInfoMiddleware
+
     if (!enrollmentNumber || !subject || !teacherName || !status || !expires) {
       return res.json({ message: "All fields are required" });
+    }
+
+    // Check if any student has already marked attendance with this IP and QR (expires)
+    const alreadyUsed = await AttendenceSchema.findOne({
+      "attendance.expires": expires,
+      "attendance.ip": ipInfo.ip
+    });
+
+    if (alreadyUsed) {
+      return res.json({
+        message: "Attendance already marked from this device for this QR code."
+      });
     }
 
     // Find student by enrollment number
@@ -379,19 +392,19 @@ async function handleStudentAttendance(req, res) {
       return res.json({ message: "Student not found, attendance not marked" });
     }
 
-    // Check if attendance for this QR (expires) already exists
+    // Check if this student already marked attendance for this QR
     const alreadyMarked = student.attendance.some(entry => entry.expires === expires);
     if (alreadyMarked) {
       return res.json({ message: "Attendance already marked for this QR code." });
     }
-
 
     // Push new attendance entry into student's attendance array
     student.attendance.push({
       subject,
       teacherName,
       status,
-      expires
+      expires,
+      ip: ipInfo.ip
     });
 
     await student.save();

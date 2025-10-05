@@ -8,6 +8,7 @@ const {
   handleScanQR,
   handleStudentAttendance
 } = require('../controller/postcontrol');
+const ipInfoMiddleware = require('../middleware/ipinfomiddleware');
 const express = require('express');
 const postRouter = express.Router();
 
@@ -18,6 +19,6 @@ postRouter.post('/verify-otp', verifyOtpApi);
 postRouter.post('/login', handleUserLogin);
 postRouter.post('/generate-qr', handleGenerateQR);
 postRouter.post('/scan-qr', handleScanQR);
-postRouter.post('/mark-attendance', handleStudentAttendance);
+postRouter.post('/mark-attendance', ipInfoMiddleware, handleStudentAttendance);
 
 module.exports = postRouter;

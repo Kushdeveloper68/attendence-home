@@ -10,7 +10,8 @@ const attendanceEntrySchema = new mongoose.Schema({
     enum: ["Present", "Absent"],
     default: "Absent"
   },
-  expires: { type:Number, required: true }
+  expires: { type:Number, required: true },
+  ip:{type:String,required: true}
 });
 
 // Student schema

@@ -1,7 +1,7 @@
 import React, { useState ,useEffect } from "react";
 import { signupStudentApi, signupTeacherApi, sendOtpApi, verifyOtpApi } from "../apis/API";
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/authcontext";
 export default function Signup() {
   const {setToken} = useAuth()
   const [role, setRole] = useState("student");
