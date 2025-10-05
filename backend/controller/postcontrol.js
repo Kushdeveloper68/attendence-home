@@ -385,6 +385,7 @@ async function handleStudentAttendance(req, res) {
       return res.json({ message: "Attendance already marked for this QR code." });
     }
 
+
     // Push new attendance entry into student's attendance array
     student.attendance.push({
       subject,
@@ -396,6 +397,7 @@ async function handleStudentAttendance(req, res) {
     await student.save();
 
     return res.status(200).json({
+      expires,
       message: "Attendance marked successfully ✅",
     });
   } catch (error) {
@@ -404,7 +406,6 @@ async function handleStudentAttendance(req, res) {
   }
 };
 
-module.exports = { handleStudentAttendance };
 
 module.exports = {
   handleStudentUser,

@@ -12,7 +12,7 @@ export default function StudentDashboard() {
   const [parsedUser, setParsedUser] = useState({})
   const user = localStorage.getItem("student") || localStorage.getItem("teacher");
   const token = localStorage.getItem("token");
-
+  
   const fileInputRef = useRef();
 
   const [scanning, setScanning] = useState(false);

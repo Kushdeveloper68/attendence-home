@@ -29,6 +29,7 @@
     "express-rate-limit": "^8.0.1",
     "helmet": "^8.1.0",
     "http": "^0.0.1-security",
+    "ipinfo": "^1.5.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.0",
     "multer": "^2.0.1",

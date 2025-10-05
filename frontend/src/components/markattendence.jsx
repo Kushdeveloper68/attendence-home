@@ -12,7 +12,7 @@ export default function MarkAttendance() {
   const navigator = useNavigate();
   const location = useLocation();
   const { students = [], branch, semester, subject , teacherName, expires } = location.state || {};
-
+  let expiresArray = JSON.parse(localStorage.getItem("expiresToken") || "[]");
   // Track attendance for each student (default: false)
   const [attendance, setAttendance] = useState(
     students.map(() => false)
@@ -42,6 +42,7 @@ export default function MarkAttendance() {
     }
 
     const markedStudent = students[idx];
+
     // Check that the logged-in user's enrollment number matches the marked student
     if (parsedUser.enrollmentNumber !== markedStudent.enrollmentNumber) {
       alert("You can only mark your own attendance.");
@@ -54,9 +55,14 @@ export default function MarkAttendance() {
       subject,
       teacherName: teacherName, // If you have teacherName, pass it here
       status: "Present",
-       expires
+      expires
     };
        console.log(attendanceData);
+
+   if (expiresArray.includes(expires)) {
+  alert("Attendance already marked by this device. Please don't try to make duplicate attendance.");
+  return;
+}
     try {
       const response = await markAttendanceApi(attendanceData);
       alert(
@@ -64,7 +70,13 @@ export default function MarkAttendance() {
           ? `${response.message} (${markedStudent.enrollmentNumber})`
           : `Attendance submitted (${markedStudent.enrollmentNumber})`
       );
-      navigator("/studentdashboard");
+     
+  if (response.expires) {
+    expiresArray.push(response.expires);
+    localStorage.setItem("expiresToken", JSON.stringify(expiresArray));
+  }
+
+      navigator("/studentdashboard", {expires:response.expires});
     } catch (error) {
       alert("Error submitting attendance.");
     }
