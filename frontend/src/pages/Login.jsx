@@ -1,9 +1,9 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { loginApi } from "../apis/API";
 import { useNavigate , Link } from 'react-router-dom';
-
+import {useAuth} from "../context/authcontext";
 export default function Login() {
- 
+  const {setToken} = useAuth()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -36,11 +36,13 @@ export default function Login() {
       if (data && data.user && data.user.role === "student") {
         localStorage.setItem("student", JSON.stringify(data.user));
         localStorage.setItem("token", data.token);
+        setToken(data.token);
         navigate("/studentdashboard");
 
       } else if (data && data.user && data.user.role === "teacher") {
         localStorage.setItem("teacher", JSON.stringify(data.user));
-        localStorage.setItem("token", data.token);  
+        localStorage.setItem("token", data.token);
+        setToken(data.token);
         navigate("/teacherdashboard");
       } else {
         setErrorMsg(data.message || "Login failed. Please check your credentials.");

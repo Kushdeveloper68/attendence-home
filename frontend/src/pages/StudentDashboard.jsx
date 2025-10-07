@@ -5,9 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { useApi, scanQRApi } from "../apis/API"
 import { Scanner } from '@yudiel/react-qr-scanner';
 import { BrowserQRCodeReader } from '@zxing/browser';
-
+import {useAuth} from "../context/authcontext"
 export default function StudentDashboard() {
   const api = useApi()
+  const {authToken} = useAuth()
+  console.log("getting token is here", authToken);
   const navigator = useNavigate();
   const [parsedUser, setParsedUser] = useState({})
   const user = localStorage.getItem("student") || localStorage.getItem("teacher");
@@ -254,87 +256,7 @@ export default function StudentDashboard() {
               <h3 className='text-2xl font-bold text-navy mb-6'>
                 Temporary Attendance Report
               </h3>
-              <form className='space-y-4'>
-                <div>
-                  <label
-                    className='block text-sm font-medium text-gray-700'
-                    htmlFor='name'
-                  >
-                    Name
-                  </label>
-                  <input
-                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal focus:ring-teal sm:text-sm bg-gray-100'
-                    id='name'
-                    type='text'
-                    value={parsedUser.name}
-                    readOnly
-                  />
-                </div>
-                <div>
-                  <label
-                    className='block text-sm font-medium text-gray-700'
-                    htmlFor='enrollment'
-                  >
-                    Enrollment Number
-                  </label>
-                  <input
-                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal focus:ring-teal sm:text-sm bg-gray-100'
-                    id='enrollment'
-                    type='text'
-                    value={parsedUser.enrollmentNumber}
-                    readOnly
-                  />
-                </div>
-                <div>
-                  <label
-                    className='block text-sm font-medium text-gray-700'
-                    htmlFor='subject'
-                  >
-                    Subject
-                  </label>
-                  <select
-                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal focus:ring-teal sm:text-sm'
-                    id='subject'
-                  >
-                    <option>Select Subject</option>
-                    <option>Data Structures</option>
-                    <option>Algorithms</option>
-                    <option>Database Management</option>
-                  </select>
-                </div>
-                <div>
-                  <label
-                    className='block text-sm font-medium text-gray-700'
-                    htmlFor='semester'
-                  >
-                    Semester
-                  </label>
-                  <input
-                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal focus:ring-teal sm:text-sm bg-gray-100'
-                    id='semester'
-                    type='text'
-                    value={parsedUser.semester}
-                    readOnly
-                  />
-                </div>
-                <div>
-                  <label
-                    className='block text-sm font-medium text-gray-700'
-                    htmlFor='reason'
-                  >
-                    Reason
-                  </label>
-                  <textarea
-                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal focus:ring-teal sm:text-sm'
-                    id='reason'
-                    placeholder='Please provide a valid reason...'
-                    rows={4}
-                  ></textarea>
-                </div>
-                <button className='btn btn-student-primary w-full' type='submit'>
-                  Submit Report
-                </button>
-              </form>
+              
             </div>
             <div className='card p-6 bg-navy text-white'>
               <h3 className='text-xl font-bold mb-4'>Terms & Conditions</h3>

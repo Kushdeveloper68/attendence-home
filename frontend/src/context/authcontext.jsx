@@ -3,10 +3,10 @@ import React, { createContext, useContext, useState } from "react";
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(null);
+  const [authToken, setToken] = useState(() => localStorage.getItem("token"));
 
   return (
-    <AuthContext.Provider value={{ token, setToken }}>
+    <AuthContext.Provider value={{ authToken, setToken }}>
       {children}
     </AuthContext.Provider>
   );

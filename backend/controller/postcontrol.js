@@ -245,7 +245,6 @@ async function handleTeacherUser (req, res) {
 async function handleUserLogin(req, res) {
   try {
     const { email, password } = req.body
-
     // Find user by email
     if (!email || !password) {
       return res.json({ success: false, message: 'Email and password are required' })
@@ -263,7 +262,7 @@ async function handleUserLogin(req, res) {
     if (!isMatch) {
       return res.json({ success: false, message: 'Invalid email or password' })
     }
-
+   console.log(key);
     // Create and send JWT token
     const token = jwt.sign({ user: user, role: user.role }, key, {
       expiresIn: '7d'
@@ -330,7 +329,6 @@ async function handleScanQR(req, res) {
   if (!branch || !semester || !subject || !expires || !teacherName) {
     return res.json({ success: false, message: "All fields are required" });
   }
-
   // Check expiry
   if (Date.now() > expires) {
     return res.json({ success: false, message: "QR code has expired" });
@@ -369,7 +367,7 @@ async function handleStudentAttendance(req, res) {
   try {
     const { enrollmentNumber, subject, teacherName, status, expires } = req.body;
     const ipInfo = req.ipInfo; // Retrieved from ipInfoMiddleware
-
+      
     if (!enrollmentNumber || !subject || !teacherName || !status || !expires) {
       return res.json({ message: "All fields are required" });
     }

@@ -7,11 +7,11 @@ const API = axios.create({
 
 // Custom hook to set token in header
 export function useApi() {
-  const { token } = useAuth();
+  const { authToken } = useAuth();
 
   API.interceptors.request.use((config) => {
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+    if (authToken) {
+      config.headers['Authorization'] = `Bearer ${authToken}`;
     }
     return config;
   });

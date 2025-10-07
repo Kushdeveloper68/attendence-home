@@ -9,6 +9,7 @@ const {
   handleStudentAttendance
 } = require('../controller/postcontrol');
 const ipInfoMiddleware = require('../middleware/ipinfomiddleware');
+const tokenCheckMiddleware = require('../middleware/tokencheckmiddleware');
 const express = require('express');
 const postRouter = express.Router();
 
@@ -17,8 +18,8 @@ postRouter.post('/signup/teacher', handleTeacherUser);
 postRouter.post('/send-otp', handleSendOTP);
 postRouter.post('/verify-otp', verifyOtpApi);
 postRouter.post('/login', handleUserLogin);
-postRouter.post('/generate-qr', handleGenerateQR);
-postRouter.post('/scan-qr', handleScanQR);
-postRouter.post('/mark-attendance', ipInfoMiddleware, handleStudentAttendance);
+postRouter.post('/generate-qr', tokenCheckMiddleware, handleGenerateQR);
+postRouter.post('/scan-qr', tokenCheckMiddleware, handleScanQR);
+postRouter.post('/mark-attendance', [ipInfoMiddleware, tokenCheckMiddleware], handleStudentAttendance);
 
 module.exports = postRouter;

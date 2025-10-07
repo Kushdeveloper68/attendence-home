@@ -1,3 +1,4 @@
+require('dotenv').config({path:__dirname + "/.env"})
 const express = require("express")
 const app = express()
 const cors = require("cors")
@@ -7,7 +8,6 @@ const path = require('path')
 const { mongodbConnection } = require('./connection/connection')
 const postRouter = require('./routes/postroutes')
 app.use('/api', postRouter)
-require('dotenv').config({path:__dirname + "/.env"})
 const port = process.env.port || 5000
 
 app.use(cors({
