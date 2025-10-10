@@ -38,6 +38,6 @@ const studentUserSchema = new mongoose.Schema({
   }
 });
 
-const StudentUser = mongoose.model('StudentUser', studentUserSchema);
+const StudentUser = mongoose.model('Student User', studentUserSchema);
 
 module.exports = StudentUser;

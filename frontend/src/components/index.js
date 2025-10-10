@@ -4,7 +4,7 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import ProfileCard from './Profilecard';
 import  StudentReportForm from "./StudentReportForm"
-import  TeacherReportForm from "./TeachertReportForm"
+import  TeacherReportForm from "./TeacherReportForm"
 export {
     GenerateQR,
     MarkAttendance,

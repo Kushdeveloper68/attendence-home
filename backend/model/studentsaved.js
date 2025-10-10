@@ -30,6 +30,6 @@ const studentSavedSchema = new mongoose.Schema({
   }
 });
 
-const StudentSaved = mongoose.model('StudentSaved', studentSavedSchema);
+const StudentSaved = mongoose.model('Student Saved', studentSavedSchema);
 
 module.exports = StudentSaved;

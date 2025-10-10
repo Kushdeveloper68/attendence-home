@@ -56,7 +56,7 @@ console.log("token in teacherdashboard", token);
               {/* Report Form Card */}
               <div className="card p-6">
                 <h3 className="text-xl font-bold text-[var(--dark-text)] mb-4">Teacher Report Form</h3>
-                
+                <TeacherReportForm parsedUser={parsedUser}/>
               </div>
               {/* Terms & Conditions Card */}
               <div className="card relative overflow-hidden">

@@ -1,5 +1,5 @@
 import "../styles/student.css"
-import { Navbar, Footer, ProfileCard } from '../components/';
+import { Navbar, Footer, ProfileCard , StudentReportForm} from '../components/';
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApi, scanQRApi } from "../apis/API"
@@ -21,6 +21,14 @@ export default function StudentDashboard() {
   const [qrData, setQrData] = useState({});
 
 
+  useEffect(() => {
+    if (!user && !token) navigator("/");
+    const role = JSON.parse(user)?.role;
+    setParsedUser(JSON.parse(user));
+    if (role !== "student") {
+      navigator("/");
+    }
+  }, [user])
 
   const handleScan = async (detectedCodes) => {
     if (detectedCodes.length > 0) {
@@ -98,15 +106,6 @@ export default function StudentDashboard() {
       alert("Error reading QR code from image.");
     }
   };
-
-  useEffect(() => {
-    if (!user && !token) navigator("/");
-    const role = JSON.parse(user)?.role;
-    setParsedUser(JSON.parse(user));
-    if (role !== "student") {
-      navigator("/");
-    }
-  }, [user])
 
   return (
     <div className='relative flex min-h-screen flex-col bg-gray-100 font-poppins'>
@@ -256,7 +255,7 @@ export default function StudentDashboard() {
               <h3 className='text-2xl font-bold text-navy mb-6'>
                 Temporary Attendance Report
               </h3>
-              
+              <StudentReportForm parsedUser={parsedUser}/>
             </div>
             <div className='card p-6 bg-navy text-white'>
               <h3 className='text-xl font-bold mb-4'>Terms & Conditions</h3>

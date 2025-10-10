@@ -98,3 +98,23 @@ export const markAttendanceApi = async (data) => {
     throw error;
   }
 };
+
+export const submitStudentReportApi = async (data) => {
+  try {
+    const response = await API.post('/student-report', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error submitting student report:', error);
+    throw error;
+  }
+};
+
+export const submitTeacherReportApi = async (data) => {
+  try {
+    const response = await API.post('/teacher-report', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error submitting teacher report:', error);
+    throw error;
+  }
+};

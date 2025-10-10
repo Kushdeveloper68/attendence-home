@@ -3,10 +3,12 @@ const {
   StudentUser,
   TeacherSaved,
   TeacherUser,
-  AttendenceSchema
+  AttendenceSchema,
+  StudentReport,
+  TeacherReport
 } = require('../model')
-const QRCode = require('qrcode');
-const fs = require('fs');
+const QRCode = require('qrcode')
+const fs = require('fs')
 const bcrypt = require('bcryptjs')
 const nodemailer = require('nodemailer')
 const jwt = require('jsonwebtoken')
@@ -72,10 +74,6 @@ async function handleSendOTP (req, res) {
   }
 }
 
-
-
-
-
 async function verifyOtpApi (req, res) {
   const { email, otp } = req.body
   const storedOtp = otpStore[email]
@@ -85,7 +83,7 @@ async function verifyOtpApi (req, res) {
 
     if (storedOtp.otp === otp) {
       delete otpStore[email] // OTP verified, remove from store
-      return res.json({ success: true , message: 'OTP verified successfully' })
+      return res.json({ success: true, message: 'OTP verified successfully' })
     } else {
       return res.json({ success: false, message: 'Invalid OTP' })
     }
@@ -95,25 +93,21 @@ async function verifyOtpApi (req, res) {
   }
 }
 
-
-
-
-
-async function handleStudentUser(req, res) {
+async function handleStudentUser (req, res) {
   try {
     const { name, email, branch, password, semester, enrollment, phone, role } =
       req.body
     // You might want to add validation and hashing for the password here
-    const existingStudentUser = await StudentUser.findOne({
-      $or: [{ email }, { enrollmentNumber: enrollment }, { phone }]
-    })
+    const existingStudentUser =
+      (await StudentUser.findOne({
+        $or: [{ email }, { enrollmentNumber: enrollment }, { phone }]
+      })) || (await TeacherUser.findOne({ email }))
     if (existingStudentUser) {
       return res
         .status(400)
         .json({ success: false, message: 'Email already registered' })
     }
     // find student in the student saved database by thier enrollement number
-    console.log('Checking enrollment number:', enrollment)
     const existingStudent = await StudentSaved.findOne({
       email,
       branch,
@@ -140,7 +134,6 @@ async function handleStudentUser(req, res) {
       role
     })
 
-
     const studentAttendanceRecord = await AttendenceSchema.create({
       name,
       email,
@@ -166,7 +159,7 @@ async function handleStudentUser(req, res) {
         branch: newStudent.branch,
         semester: newStudent.semester,
         enrollmentNumber: newStudent.enrollmentNumber,
-        role:newStudent.role
+        role: newStudent.role
       },
       token
     })
@@ -176,30 +169,32 @@ async function handleStudentUser(req, res) {
   }
 }
 
-
-
-
-
 async function handleTeacherUser (req, res) {
   try {
-    const { name, email, branch, password, uniqueid, phone ,role } = req.body
+    const { name, email, branch, password, uniqueid, phone, role } = req.body
     console.log(req.body)
     // You might want to add validation and hashing for the password here
-    const existingTeacherUser = await TeacherUser.findOne({
-        $or: [{email }, { uniqueid  }, { phone }]
-    })
-    if(existingTeacherUser) { 
-      return res.json({ success: false, message: 'Email or Unique ID or Phone already registered' })
+    const existingTeacherUser =
+      (await TeacherUser.findOne({
+        $or: [{ email }, { uniqueid }, { phone }]
+      })) || (await StudentUser.findOne({ email }))
+    if (existingTeacherUser) {
+      return res.json({
+        success: false,
+        message: 'Email or Unique ID or Phone already registered'
+      })
     }
 
-    
     // find teacher in the teacher saved database by thier uniqueid number
-    const existingTeacher = await TeacherSaved.findOne({ 
-     uniqueId: uniqueid,
-     })
+    const existingTeacher = await TeacherSaved.findOne({
+      uniqueId: uniqueid
+    })
 
-    if (!existingTeacher){
-      return res.json({ success: false, message: 'Unique ID not found in records' })
+    if (!existingTeacher) {
+      return res.json({
+        success: false,
+        message: 'Unique ID not found in records'
+      })
     }
     const hashedPassword = await bcrypt.hash(password, 10)
     // create teacher user
@@ -208,7 +203,7 @@ async function handleTeacherUser (req, res) {
       email,
       branch,
       password: hashedPassword,
-     uniqueId: uniqueid,
+      uniqueId: uniqueid,
       phone,
       role
     })
@@ -238,16 +233,15 @@ async function handleTeacherUser (req, res) {
   }
 }
 
-
-
-
-
-async function handleUserLogin(req, res) {
+async function handleUserLogin (req, res) {
   try {
     const { email, password } = req.body
     // Find user by email
     if (!email || !password) {
-      return res.json({ success: false, message: 'Email and password are required' })
+      return res.json({
+        success: false,
+        message: 'Email and password are required'
+      })
     }
     // Check in both StudentUser and TeacherUser collections
     let user = await StudentUser.findOne({ email })
@@ -262,7 +256,7 @@ async function handleUserLogin(req, res) {
     if (!isMatch) {
       return res.json({ success: false, message: 'Invalid email or password' })
     }
-   console.log(key);
+    console.log(key)
     // Create and send JWT token
     const token = jwt.sign({ user: user, role: user.role }, key, {
       expiresIn: '7d'
@@ -274,9 +268,9 @@ async function handleUserLogin(req, res) {
       user: {
         name: user.name,
         branch: user.branch,
-        semester: user.semester? user.semester : null,
-        enrollmentNumber: user.enrollmentNumber? user.enrollmentNumber : null,
-        uniqueid: user.uniqueId? user.uniqueId : null,
+        semester: user.semester ? user.semester : null,
+        enrollmentNumber: user.enrollmentNumber ? user.enrollmentNumber : null,
+        uniqueid: user.uniqueId ? user.uniqueId : null,
         phone: user.phone,
         email: user.email,
         role: user.role
@@ -289,111 +283,109 @@ async function handleUserLogin(req, res) {
   }
 }
 
-
-
-
-
-
-async function handleGenerateQR(req, res) {
-  const { branch, semester, subject, teacherName } = req.body;
+async function handleGenerateQR (req, res) {
+  const { branch, semester, subject, teacherName } = req.body
 
   // Set expiry time (current time + 15 minutes)
-  const expires = Date.now() + 15 * 60 * 1000;
-  
+  const expires = Date.now() + 15 * 60 * 1000
+
   // Include expiry in QR data
-  const userData = { branch, semester, subject, teacherName, expires };
-  const qrData = JSON.stringify(userData);
+  const userData = { branch, semester, subject, teacherName, expires }
+  const qrData = JSON.stringify(userData)
 
   try {
     const qrBuffer = await QRCode.toBuffer(qrData, {
-      color: { dark: "#000000", light: "#ffffff" },
+      color: { dark: '#000000', light: '#ffffff' },
       width: 300
-    });
+    })
 
-    const qrBase64 = qrBuffer.toString('base64');
+    const qrBase64 = qrBuffer.toString('base64')
     res.json({
       success: true,
       qrImage: `data:image/png;base64,${qrBase64}`
-    });
+    })
   } catch (err) {
-    console.error("❌ Error generating QR:", err);
-    res.status(500).json({ success: false, message: "Error generating QR code" });
+    console.error('❌ Error generating QR:', err)
+    res
+      .status(500)
+      .json({ success: false, message: 'Error generating QR code' })
   }
 }
 
-
-
-async function handleScanQR(req, res) {
-  const { branch, semester, subject, expires , teacherName} = req.body;
+async function handleScanQR (req, res) {
+  const { branch, semester, subject, expires, teacherName } = req.body
 
   if (!branch || !semester || !subject || !expires || !teacherName) {
-    return res.json({ success: false, message: "All fields are required" });
+    return res.json({ success: false, message: 'All fields are required' })
   }
   // Check expiry
   if (Date.now() > expires) {
-    return res.json({ success: false, message: "QR code has expired" });
+    return res.json({ success: false, message: 'QR code has expired' })
   }
 
   try {
-    const students = await StudentSaved.find({ branch, semester });
+    const students = await StudentSaved.find({ branch, semester })
     if (!students || students.length === 0) {
-      return res.json({ success: false, message: "No students found" });
+      return res.json({ success: false, message: 'No students found' })
     }
-
 
     const studentList = students.map(student => ({
       name: student.name,
-      enrollmentNumber: student.enrollmentNumber,
-    }));
+      enrollmentNumber: student.enrollmentNumber
+    }))
 
     res.json({
       success: true,
-      message: "QR data processed successfully",
+      message: 'QR data processed successfully',
       students: studentList,
       branch,
       semester,
       subject,
       teacherName,
       expires
-    });
+    })
   } catch (error) {
-    console.error("Error scanning QR:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error('Error scanning QR:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
   }
 }
 
 // 📌 Handle student attendance
-async function handleStudentAttendance(req, res) {
+async function handleStudentAttendance (req, res) {
   try {
-    const { enrollmentNumber, subject, teacherName, status, expires } = req.body;
-    const ipInfo = req.ipInfo; // Retrieved from ipInfoMiddleware
-      
+    const { enrollmentNumber, subject, teacherName, status, expires } = req.body
+    const ipInfo = req.ipInfo // Retrieved from ipInfoMiddleware
+
     if (!enrollmentNumber || !subject || !teacherName || !status || !expires) {
-      return res.json({ message: "All fields are required" });
+      return res.json({ message: 'All fields are required' })
     }
 
     // Check if any student has already marked attendance with this IP and QR (expires)
     const alreadyUsed = await AttendenceSchema.findOne({
-      "attendance.expires": expires,
-      "attendance.ip": ipInfo.ip
-    });
+      'attendance.expires': expires,
+      'attendance.ip': ipInfo.ip
+    })
 
     if (alreadyUsed) {
       return res.json({
-        message: "Attendance already marked from this device for this QR code."
-      });
+        message: 'Attendance already marked from this device for this QR code.'
+      })
     }
 
     // Find student by enrollment number
-    const student = await AttendenceSchema.findOne({ enrollmentNumber });
+    const student = await AttendenceSchema.findOne({ enrollmentNumber })
     if (!student) {
-      return res.json({ message: "Student not found, attendance not marked" });
+      return res.json({ message: 'Student not found, attendance not marked' })
     }
 
     // Check if this student already marked attendance for this QR
-    const alreadyMarked = student.attendance.some(entry => entry.expires === expires);
+    const alreadyMarked = student.attendance.some(
+      entry => entry.expires === expires
+    )
     if (alreadyMarked) {
-      return res.json({ message: "Attendance already marked for this QR code." });
+      return res.json({
+        message: 'Attendance already marked for this QR code.'
+      })
     }
 
     // Push new attendance entry into student's attendance array
@@ -403,20 +395,65 @@ async function handleStudentAttendance(req, res) {
       status,
       expires,
       ip: ipInfo.ip
-    });
+    })
 
-    await student.save();
+    await student.save()
 
     return res.status(200).json({
       expires,
-      message: "Attendance marked successfully ✅",
-    });
+      message: 'Attendance marked successfully ✅'
+    })
   } catch (error) {
-    console.error("Error in handleStudentAttendance:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error('Error in handleStudentAttendance:', error)
+    res.status(500).json({ message: 'Server error', error: error.message })
   }
-};
+}
 
+// Student report controller
+async function handleStudentReport (req, res) {
+  try {
+    const { name, enrollmentNumber, semester, subject, reason } = req.body
+    if (!name || !enrollmentNumber || !semester || !subject || !reason) {
+      return res.json({ message: 'All fields are required' })
+    }
+    const report = new StudentReport({
+      name,
+      enrollmentNumber,
+      semester,
+      subject,
+      reason
+    })
+    await report.save()
+    res.status(201).json({ message: 'Student report submitted successfully' })
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: 'Error submitting student report',
+        error: error.message
+      })
+  }
+}
+
+// Teacher report controller
+async function handleTeacherReport (req, res) {
+  try {
+    const { name, email, problem } = req.body
+    if (!name || !email || !problem) {
+      return res.json({ message: 'All fields are required' })
+    }
+    const report = new TeacherReport({ name, email, problem })
+    await report.save()
+    res.status(201).json({ message: 'Teacher report submitted successfully' })
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: 'Error submitting teacher report',
+        error: error.message
+      })
+  }
+}
 
 module.exports = {
   handleStudentUser,
@@ -425,6 +462,8 @@ module.exports = {
   verifyOtpApi,
   handleUserLogin,
   handleGenerateQR,
-  handleScanQR, 
-  handleStudentAttendance
+  handleScanQR,
+  handleStudentAttendance,
+  handleStudentReport,
+  handleTeacherReport
 }

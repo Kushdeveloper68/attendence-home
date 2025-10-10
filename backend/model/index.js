@@ -3,4 +3,6 @@ const  StudentUser = require('./studentuser');
 const StudentSaved = require('./studentsaved');
 const TeacherSaved = require('./teachersaved');
 const  AttendenceSchema = require('./attendencesaved'); 
-module.exports = { TeacherUser, StudentUser , TeacherSaved, StudentSaved, AttendenceSchema };
+const StudentReport = require("./studentReport");
+const TeacherReport = require("./teacherReport");
+module.exports = { TeacherUser, StudentUser , TeacherSaved, StudentSaved, AttendenceSchema, StudentReport, TeacherReport };
