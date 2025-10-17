@@ -2,7 +2,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {AdminNavbar} from './components';
-
+import { useApi } from '../apis/API';
+import { useAuth } from '../context/authcontext';
   
 
 export default function AdminDashboard() {
@@ -11,6 +12,8 @@ export default function AdminDashboard() {
   const token = localStorage.getItem("token");
  const navigator = useNavigate();
  const [parsedUser, setParsedUser] = useState({})
+ const api = useApi()
+   const {authToken} = useAuth()
   
     useEffect(() => {
       if (!user && !token) navigator("/");

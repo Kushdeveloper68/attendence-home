@@ -7,7 +7,7 @@ const cookiesP = require('cookie-parser');
 const path = require('path')
 const { mongodbConnection } = require('./connection/connection')
 const postRouter = require('./routes/postroutes')
-app.use('/api', postRouter)
+const AdminRouter = require('./routes/adminroute')
 const port = process.env.port || 5000
 
 app.use(cors({
@@ -26,6 +26,8 @@ app.use(cookiesP())
 app.use(express.static(path.join(__dirname, './views')))
  
 app.use('/', postRouter)
+app.use('/admin', AdminRouter);
+
 
 // set up static files
 app.listen(port, () =>

@@ -9,7 +9,6 @@ import {useAuth} from "../context/authcontext"
 export default function StudentDashboard() {
   const api = useApi()
   const {authToken} = useAuth()
-  console.log("getting token is here", authToken);
   const navigator = useNavigate();
   const [parsedUser, setParsedUser] = useState({})
   const user = localStorage.getItem("student") || localStorage.getItem("teacher");
