@@ -1,9 +1,9 @@
-import React, { useState ,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { signupStudentApi, signupTeacherApi, sendOtpApi, verifyOtpApi } from "../apis/API";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../context/authcontext";
 export default function Signup() {
-  const {setToken} = useAuth()
+  const { setToken } = useAuth()
   const [role, setRole] = useState("student");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -23,20 +23,20 @@ export default function Signup() {
   const navigate = useNavigate();
   // Handle form submit: send OTP to email
   useEffect(() => {
-      const student = localStorage.getItem("student");
-      const teacher = localStorage.getItem("teacher");
-      let user = null;
-      if (student) user = JSON.parse(student);
-      else if (teacher) user = JSON.parse(teacher);
-  
-      if (user && user.role) {
-        if (user.role === "student") {
-          navigate("/studentdashboard");
-        } else if (user.role === "teacher") {
-          navigate("/teacherdashboard");
-        }
+    const student = localStorage.getItem("student");
+    const teacher = localStorage.getItem("teacher");
+    let user = null;
+    if (student) user = JSON.parse(student);
+    else if (teacher) user = JSON.parse(teacher);
+
+    if (user && user.role) {
+      if (user.role === "student") {
+        navigate("/studentdashboard");
+      } else if (user.role === "teacher") {
+        navigate("/teacherdashboard");
       }
-    }, [navigate]);
+    }
+  }, [navigate]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg("");
@@ -193,8 +193,8 @@ export default function Signup() {
             <div className="flex border-b border-gray-200">
               <button
                 className={`flex-1 text-center py-3 font-semibold border-b-2 transition-colors duration-300 ${role === "student"
-                    ? "text-teal-600 border-teal-600"
-                    : "text-gray-500 border-transparent hover:text-teal-600"
+                  ? "text-teal-600 border-teal-600"
+                  : "text-gray-500 border-transparent hover:text-teal-600"
                   }`}
                 type="button"
                 onClick={() => setRole("student")}
@@ -204,8 +204,8 @@ export default function Signup() {
               </button>
               <button
                 className={`flex-1 text-center py-3 font-semibold border-b-2 transition-colors duration-300 ${role === "teacher"
-                    ? "text-teal-600 border-teal-600"
-                    : "text-gray-500 border-transparent hover:text-teal-600"
+                  ? "text-teal-600 border-teal-600"
+                  : "text-gray-500 border-transparent hover:text-teal-600"
                   }`}
                 type="button"
                 onClick={() => setRole("teacher")}

@@ -118,3 +118,7 @@ export const submitTeacherReportApi = async (data) => {
     throw error;
   }
 };
+
+
+//admin apis 
+
