@@ -119,8 +119,8 @@ const GenerateQR = () => {
                   className="form-select appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--teal-500)] focus:border-[var(--teal-500)] transition"
                 >
                   <option value="">Select Semester</option>
-                  {[...Array(8)].map((_, i) => (
-                    <option key={i}>{i + 1}st</option>
+                  {[...Array(6)].map((_, i) => (
+                    <option key={i}>{i + 1}</option>
                   ))}
                 </select>
               </div>

@@ -2,6 +2,11 @@
 
 const {StudentSaved} = require('../model/'); // Your student schema
 const {TeacherSaved} = require('../model/'); 
+const {AttendenceSchema}= require('../model/');
+
+; // Attendance student model// Teacher model
+const {TeacherReport} = require('../model/'); // Teacher report model
+const {StudentReport} = require('../model/');
 // GET all students
  async function getAllStudents(req, res)  {
   try {
@@ -173,8 +178,132 @@ async function updateTeacher(req, res) {
   }
 };
 
+ // Update with the actual path to your model
 
 
+
+// Find ONE student attendance by enrollment number
+ async function getAttendanceByEnrollment(req, res)  {
+  const { enrollmentNumber } = req.query;
+  try {
+    const student = await AttendenceSchema.findOne({ enrollmentNumber });
+    if (!student) return res.status(404).json({ error: "Student not found" });
+    res.json({ student });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch student attendance" });
+  }
+};
+
+// FILTER students by branch & semester
+async function filterAttendance(req, res) {
+  const { branch, semester } = req.query;
+  try {
+    const students = await AttendenceSchema.find({ branch, semester });
+    res.json({ students });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch filtered attendance" });
+  }
+};
+
+// ALL students attendance -- for initial load or admin all records
+async function getAllAttendance(req, res) {
+  try {
+    const students = await AttendenceSchema.find({});
+    res.json({ students });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch all attendance" });
+  }
+};
+
+
+
+
+
+
+
+ // Student report model
+
+// 1. Count students by branch and semester
+  async function getStudentCounts(req, res) {
+  try {
+    const pipeline = [
+      { $group: {
+          _id: { branch: "$branch", semester: "$semester" },
+          count: { $sum: 1 }
+        }
+      }
+    ];
+    const result = await StudentSaved.aggregate(pipeline);
+    res.json({ counts: result });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to count students"});
+  }
+};
+
+// 2. Count teachers by branch
+async function getTeacherCounts(req, res) {
+  try {
+    const pipeline = [
+      { $group: {
+          _id: "$branch",
+          count: { $sum: 1 }
+        }
+      }
+    ];
+    const result = await TeacherSaved.aggregate(pipeline);
+    res.json({ counts: result });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to count teachers"});
+  }
+};
+
+// 3. Get all teacher reports (can be filtered by teacher unique id)
+async function getTeacherReports(req, res) {
+  try {
+    const { uniqueId } = req.query;
+    let filter = {};
+    if (uniqueId) filter = { uniqueId };
+    const reports = await TeacherReport.find(filter).sort({ createdAt: -1 });
+    res.json({ reports });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch teacher reports"});
+  }
+};
+
+// 4. Get all student reports (can be filtered by enrollment number)
+async function getStudentReports(req, res) {
+  try {
+    const { enrollmentNumber } = req.query;
+    let filter = {};
+    if (enrollmentNumber) filter = { enrollmentNumber };
+    const reports = await StudentReport.find(filter).sort({ createdAt: -1 });
+    res.json({ reports });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch student reports"});
+  }
+};
+
+// 5. Delete teacher report by ID
+async function deleteTeacherReport(req, res) {
+  try {
+    const { id } = req.params;
+    await TeacherReport.findByIdAndDelete(id);
+    res.json({ message: "Teacher report deleted" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete teacher report"});
+  }
+};
+
+// 6. Delete student report by ID
+async function deleteStudentReport(req, res) {
+  try {
+    const { id } = req.params;
+    await StudentReport.findByIdAndDelete(id);
+    res.json({ message: "Student report deleted" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete student report"});
+  }
+};
 
 module.exports = {
   getAllStudents,
@@ -189,6 +318,17 @@ module.exports = {
     filterTeachersByBranch,
     createTeacher,
     updateTeacher,
-    deleteTeacher
+    deleteTeacher,
 
+    getAttendanceByEnrollment,
+    filterAttendance,
+    getAllAttendance,
+
+    getStudentCounts,
+    getTeacherCounts,
+    getTeacherReports,
+    getStudentReports,
+    deleteTeacherReport,
+    deleteStudentReport
+    
 };

@@ -364,12 +364,12 @@ export default function Signup() {
                     disabled={showOtpBox}
                   >
                     <option value="" hidden disabled></option>
-                    <option>1st</option>
-                    <option>2nd</option>
-                    <option>3rd</option>
-                    <option>4th</option>
-                    <option>5th</option>
-                    <option>6th</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                    <option>6</option>
                   </select>
                   <label
                     htmlFor="semester"

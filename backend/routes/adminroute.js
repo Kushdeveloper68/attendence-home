@@ -10,6 +10,20 @@ const {
   deleteTeacher
 } = require('../controller/admincontrol');
 
+const { getAttendanceByEnrollment,
+  filterAttendance,
+  getAllAttendance} = require('../controller/admincontrol');
+
+const {
+  getStudentCounts,
+  getTeacherCounts,
+  getTeacherReports,
+  getStudentReports,
+  deleteTeacherReport,
+  deleteStudentReport
+} = require('../controller/admincontrol');
+
+
 AdminRouter.get('/students', getAllStudents);
 AdminRouter.get('/students/search', getStudentByEnrollment);
 AdminRouter.get('/students/filter', filterStudents);
@@ -24,6 +38,22 @@ AdminRouter.get('/teachers/filter', filterTeachersByBranch);
 AdminRouter.post('/teachers', createTeacher);
 AdminRouter.put('/teachers/:id', updateTeacher);
 AdminRouter.delete('/teachers/:id', deleteTeacher);
+
+AdminRouter.get('/attendance/search', getAttendanceByEnrollment);
+AdminRouter.get('/attendance/filter', filterAttendance);
+AdminRouter.get('/attendance/all', getAllAttendance);
+
+
+// Summary counts
+AdminRouter.get('/dashboard/student-counts', getStudentCounts);
+AdminRouter.get('/dashboard/teacher-counts', getTeacherCounts);
+
+// Reports
+AdminRouter.get('/dashboard/teacher-reports', getTeacherReports);
+AdminRouter.get('/dashboard/student-reports', getStudentReports);
+
+AdminRouter.delete('/dashboard/teacher-reports/:id', deleteTeacherReport);
+AdminRouter.delete('/dashboard/student-reports/:id', deleteStudentReport);
 
 
 module.exports = AdminRouter;

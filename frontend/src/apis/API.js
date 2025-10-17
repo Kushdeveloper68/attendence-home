@@ -242,3 +242,66 @@ export const deleteTeacherApi = async (teacherId) => {
     throw error?.response?.data?.error || "Failed to delete teacher";
   }
 };
+
+// ========== Attendance Admin Panel APIs ========== //
+
+// Get attendance by enrollment number (search)
+export const getStudentAttendanceApi = async (enrollmentNumber) => {
+  try {
+    const response = await API.get(`/admin/attendance/search`, { params: { enrollmentNumber } });
+    return response.data.student;
+  } catch (error) {
+    throw error?.response?.data?.error || "Attendance not found";
+  }
+};
+
+// Filter attendance by branch and semester (all students)
+export const getAttendanceByFilterApi = async (branch, semester) => {
+  try {
+    const response = await API.get('/admin/attendance/filter', { params: { branch, semester } });
+    return response.data.students;
+  } catch (error) {
+    throw error?.response?.data?.error || "Attendance not found";
+  }
+};
+
+export const getAllAttendanceApi = async () => {
+  try {
+    const response = await API.get('/admin/attendance/all');
+    return response.data.students;
+  } catch (error) {
+    throw error?.response?.data?.error || "Failed to fetch attendance";
+  }
+};
+
+
+// ========== Dashboard Admin Panel APIs ========== //
+// Student counts by branch & semester
+export const getStudentCountsApi = async () => {
+  const res = await API.get('/admin/dashboard/student-counts');
+  return res.data.counts;
+};
+export const getTeacherCountsApi = async () => {
+  const res = await API.get('/admin/dashboard/teacher-counts');
+  return res.data.counts;
+};
+
+// Teacher reports
+export const getTeacherReportsApi = async (uniqueId) => {
+  const res = await API.get('/admin/dashboard/teacher-reports', { params: uniqueId ? { uniqueId } : {} });
+  return res.data.reports;
+};
+export const deleteTeacherReportApi = async (id) => {
+  await API.delete(`/admin/dashboard/teacher-reports/${id}`);
+  return true;
+};
+
+// Student reports
+export const getStudentReportsApi = async (enrollmentNumber) => {
+  const res = await API.get('/admin/dashboard/student-reports', { params: enrollmentNumber ? { enrollmentNumber } : {} });
+  return res.data.reports;
+};
+export const deleteStudentReportApi = async (id) => {
+  await API.delete(`/admin/dashboard/student-reports/${id}`);
+  return true;
+};

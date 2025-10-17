@@ -110,9 +110,6 @@ async function handleStudentUser (req, res) {
     }
     // find student in the student saved database by thier enrollement number
     const existingStudent = await StudentSaved.findOne({
-      email,
-      branch,
-      semester,
       enrollmentNumber: enrollment
     })
     if (!existingStudent)

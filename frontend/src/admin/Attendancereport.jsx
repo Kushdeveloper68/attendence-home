@@ -1,32 +1,113 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AdminNavbar } from "./components";
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  getStudentAttendanceApi,
+  getAttendanceByFilterApi,
+  getAllAttendanceApi
+} from '../apis/API';
 
 export default function AttendancePage() {
   const user = localStorage.getItem("student") || localStorage.getItem("teacher")|| localStorage.getItem("admin");
   const token = localStorage.getItem("token");
- const navigator = useNavigate();
- const [parsedUser, setParsedUser] = useState({})
+  const navigator = useNavigate();
 
-      useEffect(() => {
-        if (!user && !token) navigator("/");
-        const role = JSON.parse(user)?.role;
-        setParsedUser(JSON.parse(user));
-        if (role !== "admin") {
-          navigator("/");
-        }
-      }, [user])
+  const [parsedUser, setParsedUser] = useState({});
+  const [searchEnrollment, setSearchEnrollment] = useState('');
+  const [filterBranch, setFilterBranch] = useState('');
+  const [filterSemester, setFilterSemester] = useState('');
+  const [attendanceList, setAttendanceList] = useState([]);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  // For summary stats
+  const [summary, setSummary] = useState({ present: 0, absent: 0, total: 0 });
+
+  useEffect(() => {
+    if (!user && !token) navigator("/");
+    const role = JSON.parse(user)?.role;
+    setParsedUser(JSON.parse(user));
+    if (role !== "admin") navigator("/");
+    fetchAllAttendance();
+    // eslint-disable-next-line
+  }, []);
+
+  const fetchAllAttendance = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const students = await getAllAttendanceApi();
+      setAttendanceList(students);
+      calculateSummary(students);
+    } catch (err) {
+      setError(err);
+      setAttendanceList([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = async () => {
+    if (!searchEnrollment.trim()) return;
+    setLoading(true);
+    setError('');
+    try {
+      const student = await getStudentAttendanceApi(searchEnrollment.trim());
+      setAttendanceList(student ? [student] : []);
+      calculateSummary([student]);
+    } catch (err) {
+      setError(err);
+      setAttendanceList([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFilter = async () => {
+    if (!filterBranch || !filterSemester) return;
+    setLoading(true);
+    setError('');
+    try {
+      const students = await getAttendanceByFilterApi(filterBranch, filterSemester);
+      setAttendanceList(students);
+      calculateSummary(students);
+    } catch (err) {
+      setError(err);
+      setAttendanceList([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReset = () => {
+    setSearchEnrollment('');
+    setFilterBranch('');
+    setFilterSemester('');
+    fetchAllAttendance();
+  };
+
+  // Attendance summary calculation
+  const calculateSummary = (students) => {
+    let present = 0, absent = 0, total = 0;
+    students.forEach(student =>
+      student.attendance.forEach(entry => {
+        if(entry.status === "Present") present++;
+        if(entry.status === "Absent") absent++;
+        total++;
+      })
+    );
+    setSummary({ present, absent, total });
+  };
+
+  // For front-end progress circle (percent present)
+  const percentPresent = summary.total ? Math.round((summary.present / summary.total) * 100) : 0;
+
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: "#f6f7f8", color: "#111921" }}>
-      {/* Sidebar */}
-    <AdminNavbar/>
-      {/* Main content */}
+      <AdminNavbar/>
       <main className="flex-1">
-        <header
-          className="flex items-center justify-between p-6 shadow-md"
-          style={{ backgroundColor: "#ffffff" }}
-        >
+        <header className="flex items-center justify-between p-6 shadow-md"
+                style={{ backgroundColor: "#ffffff" }}>
           <div className="flex items-center gap-4">
             <button className="lg:hidden p-2">
               <span className="material-symbols-outlined">menu</span>
@@ -34,15 +115,10 @@ export default function AttendancePage() {
             <h2 className="text-2xl font-bold">Attendance Records</h2>
           </div>
           <div className="flex items-center gap-4">
-            <button
-              className="relative p-2 rounded-full transition-colors"
-              style={{ backgroundColor: "transparent" }}
-            >
+            <button className="relative p-2 rounded-full transition-colors" style={{ backgroundColor: "transparent" }}>
               <span className="material-symbols-outlined">notifications</span>
-              <span
-                className="absolute top-1 right-1 block h-2 w-2 rounded-full"
-                style={{ backgroundColor: "#ef4444" }}
-              ></span>
+              <span className="absolute top-1 right-1 block h-2 w-2 rounded-full"
+                    style={{ backgroundColor: "#ef4444" }}></span>
             </button>
             <div className="flex items-center gap-3">
               <img
@@ -55,92 +131,138 @@ export default function AttendancePage() {
                 <p style={{ color: "#6b7280" }}>admin@ams.com</p>
               </div>
             </div>
-            <button
-              className="p-2 rounded-full transition-colors"
-              style={{ backgroundColor: "transparent" }}
-            >
+            <button className="p-2 rounded-full transition-colors" style={{ backgroundColor: "transparent" }}>
               <span className="material-symbols-outlined">logout</span>
             </button>
           </div>
         </header>
 
         <div className="p-6">
-          {/* Search and Buttons */}
+          {/* Search and Filters */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-            <div className="relative w-full md:max-w-md">
-              <span style={{ color: "#6b7280" }} className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2">
-                search
-              </span>
-              <input
-                className="w-full pl-12 pr-4 py-3 rounded-lg focus:ring-2 transition"
-                style={{
-                  backgroundColor: "#ffffff",
-                  border: "1px solid #e5e7eb",
-                  color: "#111921",
-                  outlineColor: "#197fe6",
-                }}
-                placeholder="Search by Name, Email, Enrollment, etc."
-                type="text"
-              />
+            <div className="flex gap-2 items-center w-full md:max-w-lg">
+              <div className="relative w-full">
+                <span style={{ color: "#6b7280" }} className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2">
+                  search
+                </span>
+                <input
+                  className="w-full pl-12 pr-4 py-3 rounded-lg focus:ring-2 transition"
+                  style={{ backgroundColor: "#fff", border: "1px solid #e5e7eb", color: "#111921" }}
+                  placeholder="Search by Enrollment No"
+                  type="text"
+                  value={searchEnrollment}
+                  onChange={e => setSearchEnrollment(e.target.value)}
+                  onKeyPress={e => e.key === 'Enter' && handleSearch()}
+                />
+              </div>
+              <button className="px-4 py-3 rounded-lg bg-[#197fe6] text-white font-medium"
+                      onClick={handleSearch}>
+                Find
+              </button>
             </div>
             <div className="flex items-center gap-2">
-              <button
-                className="flex items-center gap-2 px-4 py-3 rounded-lg shadow-sm transition-colors"
-                style={{
-                  backgroundColor: "#ffffff",
-                  border: "1px solid #e5e7eb",
-                  color: "#6b7280",
-                }}
+              <select
+                className="px-2 py-3 border border-gray-200 rounded-lg bg-white mr-2"
+                value={filterBranch}
+                onChange={e => setFilterBranch(e.target.value)}
               >
-                <span className="material-symbols-outlined">refresh</span>
-                <span>Refresh</span>
+                <option value="">Branch</option>
+                <option value="Computer Engineering">Computer Engineering</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Civil Engineering">Civil Engineering</option>
+                <option value="Electrical Engineering">Electrical Engineering</option>
+              </select>
+              <select
+                className="px-2 py-3 border border-gray-200 rounded-lg bg-white"
+                value={filterSemester}
+                onChange={e => setFilterSemester(e.target.value)}
+              >
+                <option value="">Semester</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+              </select>
+              <button className="px-4 py-3 rounded-lg bg-[#197fe6] text-white font-medium"
+                      onClick={handleFilter}>
+                Filter
               </button>
-              <button
-                className="flex items-center gap-2 px-4 py-3 rounded-lg shadow-sm transition-colors"
-                style={{
-                  backgroundColor: "#ffffff",
-                  border: "1px solid #e5e7eb",
-                  color: "#6b7280",
-                }}
-              >
-                <span className="material-symbols-outlined">arrow_back</span>
-                <span>Back</span>
+              <button className="px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-medium border border-gray-200 ml-2"
+                      onClick={handleReset}>
+                Reset
               </button>
             </div>
           </div>
+
+          {/* Error & Loading */}
+          {error && <div className="mb-4 text-red-500">{error}</div>}
+          {loading && <div className="mb-4 text-blue-400">Loading...</div>}
 
           {/* Attendance Table */}
           <div className="rounded-lg shadow-md overflow-x-auto" style={{ backgroundColor: "#ffffff" }}>
             <table className="w-full text-left">
               <thead style={{ borderBottom: "1px solid #e5e7eb" }}>
                 <tr>
-                  <th className="p-4 font-semibold">Subject</th>
-                  <th className="p-4 font-semibold">Teacher Name</th>
-                  <th className="p-4 font-semibold">Date</th>
-                  <th className="p-4 font-semibold text-center">Status</th>
-                  <th className="p-4 font-semibold">IP Address</th>
+                  <th className="p-4 font-semibold">Name</th>
+                  <th className="p-4 font-semibold">Email</th>
+                  <th className="p-4 font-semibold">Enrollment</th>
+                  <th className="p-4 font-semibold">Branch</th>
+                  <th className="p-4 font-semibold">Semester</th>
+                  <th className="p-4 font-semibold">Attendance Details</th>
                 </tr>
               </thead>
               <tbody>
-                {[
-                  { sub: "Calculus", teacher: "Dr. Eleanor Bennett", date: "2024-07-26", status: "Present", ip: "192.168.1.100", color: "#10b981", bg: "rgba(16,185,129,0.2)" },
-                  { sub: "Physics", teacher: "Dr. Charles Harris", date: "2024-07-26", status: "Absent", color: "#ef4444", bg: "rgba(239,68,68,0.2)" },
-                  { sub: "Chemistry", teacher: "Dr. Sophia Clark", date: "2024-07-25", status: "Present", color: "#10b981", bg: "rgba(16,185,129,0.2)" },
-                  { sub: "Biology", teacher: "Dr. Daniel Lewis", date: "2024-07-25", status: "Present", color: "#10b981", bg: "rgba(16,185,129,0.2)" },
-                  { sub: "Computer Science", teacher: "Dr. Olivia Martinez", date: "2024-07-24", status: "Absent", color: "#ef4444", bg: "rgba(239,68,68,0.2)" },
-                ].map((row, idx) => (
-                  <tr key={idx} style={{ borderBottom: "1px solid #e5e7eb" }}>
-                    <td className="p-4 font-medium">{row.sub}</td>
-                    <td className="p-4" style={{ color: "#6b7280" }}>{row.teacher}</td>
-                    <td className="p-4" style={{ color: "#6b7280" }}>{row.date}</td>
-                    <td className="p-4 text-center">
-                      <span className="px-3 py-1 text-sm font-medium rounded-full" style={{ backgroundColor: row.bg, color: row.color }}>
-                        {row.status}
-                      </span>
-                    </td>
-                    <td className="p-4" style={{ color: "#6b7280" }}>{row.ip}</td>
+                {attendanceList.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="p-6 text-center text-gray-400">No attendance data found.</td>
                   </tr>
-                ))}
+                ) : (
+                  attendanceList.map(stu => (
+                    <tr key={stu.enrollmentNumber} style={{ borderBottom: "1px solid #e5e7eb" }}>
+                      <td className="p-4">{stu.name}</td>
+                      <td className="p-4">{stu.email}</td>
+                      <td className="p-4">{stu.enrollmentNumber}</td>
+                      <td className="p-4">{stu.branch}</td>
+                      <td className="p-4">{stu.semester}</td>
+                      <td className="p-4">
+                        <div className="max-h-48 overflow-y-auto rounded border border-gray-100 p-2 bg-gray-50">
+                          {stu.attendance.length === 0 ? (
+                            <p className="text-gray-400 text-sm">No records found.</p>
+                          ) : (
+                            <table className="min-w-full text-xs">
+                              <thead>
+                                <tr>
+                                  <th className="px-2 py-1">Subject</th>
+                                  <th className="px-2 py-1">Teacher</th>
+                                  <th className="px-2 py-1">Date</th>
+                                  <th className="px-2 py-1">Status</th>
+                                  <th className="px-2 py-1">IP</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {stu.attendance.map((a, idx) => (
+                                  <tr key={idx}>
+                                    <td className="px-2 py-1">{a.subject}</td>
+                                    <td className="px-2 py-1">{a.teacherName}</td>
+                                    <td className="px-2 py-1">{new Date(a.date).toLocaleDateString()}</td>
+                                    <td className="px-2 py-1">
+                                      <span className={`px-2 py-1 rounded-full font-semibold ${a.status === "Present" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}>
+                                        {a.status}
+                                      </span>
+                                    </td>
+                                    <td className="px-2 py-1">{a.ip}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -150,14 +272,14 @@ export default function AttendancePage() {
             <h3 className="text-xl font-bold mb-4">Attendance Summary</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                { label: "Present", value: "80%", color: "#10b981" },
-                { label: "Absent", value: "20%", color: "#ef4444" },
-                { label: "Total Classes", value: "50", color: "#111921" },
+                { label: "Present", value: `${percentPresent}%`, color: "#10b981" },
+                { label: "Absent", value: `${summary.absent} days`, color: "#ef4444" },
+                { label: "Total", value: `${summary.total}`, color: "#111921" },
               ].map((card, idx) => (
                 <div
                   key={idx}
                   className="p-6 rounded-lg shadow-md"
-                  style={{ backgroundColor: "#ffffff", color: card.color }}
+                  style={{ backgroundColor: "#fff", color: card.color }}
                 >
                   <p style={{ color: "#6b7280" }}>{card.label}</p>
                   <p className="text-3xl font-bold mt-2">{card.value}</p>
@@ -178,13 +300,13 @@ export default function AttendancePage() {
                       d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       fill="none"
                       stroke="#10b981"
-                      strokeDasharray="80, 100"
+                      strokeDasharray={`${percentPresent}, 100`}
                       strokeLinecap="round"
                       strokeWidth="4"
                     ></path>
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-2xl font-bold">80%</span>
+                    <span className="text-2xl font-bold">{percentPresent}%</span>
                   </div>
                 </div>
                 <div className="flex gap-4 mt-4 text-sm">
