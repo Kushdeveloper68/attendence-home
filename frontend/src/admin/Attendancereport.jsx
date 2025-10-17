@@ -1,6 +1,22 @@
 import React from "react";
 import { AdminNavbar } from "./components";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 export default function AttendancePage() {
+  const user = localStorage.getItem("student") || localStorage.getItem("teacher")|| localStorage.getItem("admin");
+  const token = localStorage.getItem("token");
+ const navigator = useNavigate();
+ const [parsedUser, setParsedUser] = useState({})
+
+      useEffect(() => {
+        if (!user && !token) navigator("/");
+        const role = JSON.parse(user)?.role;
+        setParsedUser(JSON.parse(user));
+        if (role !== "admin") {
+          navigator("/");
+        }
+      }, [user])
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: "#f6f7f8", color: "#111921" }}>
       {/* Sidebar */}

@@ -23,6 +23,8 @@ export default function Login() {
         navigate("/studentdashboard");
       } else if (user.role === "teacher" && token) {
         navigate("/teacherdashboard");
+      } else {
+        navigate("/admin")
       }
     }
   }, [navigate]);
@@ -44,7 +46,14 @@ export default function Login() {
         localStorage.setItem("token", data.token);
         setToken(data.token);
         navigate("/teacherdashboard");
-      } else {
+      } else if (data && data.user && data.user.role === "admin") {
+        localStorage.setItem("admin", JSON.stringify(data.user));
+        localStorage.setItem("token", data.token);
+        setToken(data.token);
+        navigate("/admin");
+      } 
+      
+      else {
         setErrorMsg(data.message || "Login failed. Please check your credentials.");
       }
     } catch (error) {

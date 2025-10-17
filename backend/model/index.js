@@ -5,4 +5,5 @@ const TeacherSaved = require('./teachersaved');
 const  AttendenceSchema = require('./attendencesaved'); 
 const StudentReport = require("./studentReport");
 const TeacherReport = require("./teacherReport");
-module.exports = { TeacherUser, StudentUser , TeacherSaved, StudentSaved, AttendenceSchema, StudentReport, TeacherReport };
+const AdminModel = require("./adminmodel");
+module.exports = { TeacherUser, StudentUser , TeacherSaved, StudentSaved, AttendenceSchema, StudentReport, TeacherReport , AdminModel};

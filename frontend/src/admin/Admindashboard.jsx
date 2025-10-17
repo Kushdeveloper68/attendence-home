@@ -1,7 +1,25 @@
 
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {AdminNavbar} from './components';
 
+  
+
 export default function AdminDashboard() {
+
+  const user = localStorage.getItem("student") || localStorage.getItem("teacher")|| localStorage.getItem("admin");
+  const token = localStorage.getItem("token");
+ const navigator = useNavigate();
+ const [parsedUser, setParsedUser] = useState({})
+  
+    useEffect(() => {
+      if (!user && !token) navigator("/");
+      const role = JSON.parse(user)?.role;
+      setParsedUser(JSON.parse(user));
+      if (role !== "admin") {
+        navigator("/");
+      }
+    }, [user])
   return (
     <div className="flex min-h-screen font-[Inter,sans-serif] bg-[#f6f7f8] dark:bg-[#111921] text-[#111827] dark:text-[#f9fafb]">
       {/* Sidebar */}

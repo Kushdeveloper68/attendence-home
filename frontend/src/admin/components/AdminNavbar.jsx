@@ -5,6 +5,13 @@ import AttendancePage from './../Attendancereport';
 function AdminNavbar() {
     const location = useLocation();
 
+  const logout = () => {
+    localStorage.removeItem("student");
+    localStorage.removeItem("teacher");
+    localStorage.removeItem("admin");
+    localStorage.removeItem("token");
+    window.location.href = "/";
+  };
   switch (location.pathname) {
     case "/admin":
         return (
@@ -103,8 +110,8 @@ function AdminNavbar() {
 
         {/* Logout */}
         <div className="absolute bottom-0 w-64 p-4">
-          <Link
-            to=""
+          <button
+            onClick={logout}
             className="group flex items-center px-4 py-3 text-[#6b7280] dark:text-[#9ca3af] hover:bg-[#197fe61a] dark:hover:bg-[#197fe633] hover:text-[#197fe6] rounded-lg transition-colors duration-200"
           >
             <svg
@@ -121,7 +128,7 @@ function AdminNavbar() {
               />
             </svg>
             <span className="ml-4 font-semibold">Logout</span>
-          </Link>
+          </button>
         </div>
       </aside>
 
@@ -198,13 +205,13 @@ function AdminNavbar() {
                   <span className="material-symbols-outlined">help</span>
                   <span className="font-medium">Help and Docs</span>
                 </Link>
-                <Link
+                <button
                   className="flex items-center gap-3 rounded px-3 py-2 text-[#111921] dark:text-[#f6f7f8] transition-colors hover:bg-[#197fe6]/20"
-                  to=""
+                   onClick={logout}
                 >
                   <span className="material-symbols-outlined">logout</span>
                   <span className="font-medium">Logout</span>
-                </Link>
+                </button>
               </div>
             </div>
           </aside> 
@@ -247,7 +254,7 @@ function AdminNavbar() {
               <span className="material-symbols-outlined">help</span>
               <span className="text-sm font-medium">Help and feedback</span>
             </Link>
-          </div>to
+          </div>
         </aside>
         )
         break;
@@ -314,7 +321,6 @@ function AdminNavbar() {
           </Link>
         </nav>
       </aside>
-
         )
         break;
     default:

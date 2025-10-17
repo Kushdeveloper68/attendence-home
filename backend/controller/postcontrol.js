@@ -5,7 +5,8 @@ const {
   TeacherUser,
   AttendenceSchema,
   StudentReport,
-  TeacherReport
+  TeacherReport,
+  AdminModel
 } = require('../model')
 const QRCode = require('qrcode')
 const fs = require('fs')
@@ -244,13 +245,14 @@ async function handleUserLogin (req, res) {
       })
     }
     // Check in both StudentUser and TeacherUser collections
-    let user = await StudentUser.findOne({ email })
-    if (!user) {
-      user = await TeacherUser.findOne({ email })
-    }
-    if (!user) {
-      return res.json({ success: false, message: 'Invalid email or password' })
-    }
+    let user =
+  (await StudentUser.findOne({ email })) ||
+  (await TeacherUser.findOne({ email })) ||
+  (await AdminModel.findOne({ email }));
+
+if (!user) {
+  return res.json({ success: false, message: "Invalid email or password" });
+}
     // Check password
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) {

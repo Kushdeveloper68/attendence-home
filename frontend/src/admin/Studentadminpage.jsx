@@ -1,8 +1,23 @@
 import { useState } from 'react';
 import {AdminNavbar }from './components';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 function StudentAdminPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+const user = localStorage.getItem("student") || localStorage.getItem("teacher")|| localStorage.getItem("admin");
+  const token = localStorage.getItem("token");
+ const navigator = useNavigate();
+ const [parsedUser, setParsedUser] = useState({})
+
+    useEffect(() => {
+      if (!user && !token) navigator("/");
+      const role = JSON.parse(user)?.role;
+      setParsedUser(JSON.parse(user));
+      if (role !== "admin") {
+        navigator("/");
+      }
+    }, [user])
 
   const showModal = () => {
     setIsModalOpen(true);
