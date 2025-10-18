@@ -8,13 +8,14 @@ import {
   getStudentReportsApi,
   deleteTeacherReportApi,
   deleteStudentReportApi,
+  useApi
 } from '../apis/API';
 
 export default function AdminDashboard() {
   const user = localStorage.getItem("student") || localStorage.getItem("teacher") || localStorage.getItem("admin");
   const token = localStorage.getItem("token");
   const navigator = useNavigate();
-
+   const API = useApi();
   const [parsedUser, setParsedUser] = useState({});
   const [studentCounts, setStudentCounts] = useState([]);
   const [teacherCounts, setTeacherCounts] = useState([]);
@@ -128,10 +129,10 @@ export default function AdminDashboard() {
         {(loading || !studentCounts.length || !teacherCounts.length) ? (
           <div className="mb-8">Loading summary...</div>
         ) : (
-          <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 gap-10">
+          <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 gap-10 ">
             <div>
               <h3 className="text-lg font-bold mb-3">Students by Branch and Semester</h3>
-              <table className="table-auto w-full bg-white rounded">
+              <table className="table-auto w-full dark:bg-[#1f2937] bg-white rounded ">
                 <thead>
                   <tr>
                     <th className="px-4 py-2">Branch</th>
@@ -152,7 +153,7 @@ export default function AdminDashboard() {
             </div>
             <div>
               <h3 className="text-lg font-bold mb-3">Teachers by Branch</h3>
-              <table className="table-auto w-full bg-white rounded">
+              <table className="table-auto w-full dark:bg-[#1f2937] rounded ">
                 <thead>
                   <tr>
                     <th className="px-4 py-2">Branch</th>
@@ -173,9 +174,9 @@ export default function AdminDashboard() {
         )}
 
         {/* Reports: Teacher and Student */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-8">
+        <div className="gap-12 mt-8">
 
-          <div className="bg-[#fff] dark:bg-[#1f2937] rounded-lg shadow-md p-6">
+          <div className="bg-[#fff] dark:bg-[#1f2937] rounded-lg shadow-md p-6 mb-8">
             <h3 className="text-xl font-bold mb-4">Teacher Problem Reports</h3>
             <form className="flex mb-4 gap-2" onSubmit={handleTeacherReportSearch}>
               <input
@@ -198,6 +199,7 @@ export default function AdminDashboard() {
                   <tr>
                     <th className="px-2 py-2">Name</th>
                     <th className="px-2 py-2">Email</th>
+                    <th className="px-2 py-2">UniqueID</th>
                     <th className="px-2 py-2">Problem</th>
                     <th className="px-2 py-2">Created At</th>
                     <th className="px-2 py-2">Action</th>
@@ -208,9 +210,16 @@ export default function AdminDashboard() {
                     <tr><td colSpan={5} className="p-2 text-sm text-gray-400 text-center">No reports</td></tr>
                   ) : (
                     teacherReports.map((r) => (
-                      <tr key={r._id}>
+                      <tr key={r._id} style={{padding:"6px", border:"1px solid #3a3131b9", transition:"all 0.2s ease"}} onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "#197fe6";
+                        e.currentTarget.style.color = "#fff";
+                      }} onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.color = "#fff";
+                      }}>
                         <td className="px-2 py-1">{r.name}</td>
                         <td className="px-2 py-1">{r.email}</td>
+                        <td className="px-2 py-1">{r.uniqueId}</td>
                         <td className="px-2 py-1">{r.problem}</td>
                         <td className="px-2 py-1">{new Date(r.createdAt).toLocaleString()}</td>
                         <td className="px-2 py-1">
@@ -262,7 +271,13 @@ export default function AdminDashboard() {
                     <tr><td colSpan={7} className="p-2 text-sm text-gray-400 text-center">No reports</td></tr>
                   ) : (
                     studentReports.map((r) => (
-                      <tr key={r._id}>
+                      <tr key={r._id} style={{padding:"6px", border:"1px solid #3a3131b9", transition:"all 0.2s ease"}} onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "#197fe6";
+                        e.currentTarget.style.color = "#fff";
+                      }} onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.color = "#fff";
+                      }}>
                         <td className="px-2 py-1">{r.name}</td>
                         <td className="px-2 py-1">{r.enrollmentNumber}</td>
                         <td className="px-2 py-1">{r.semester}</td>

@@ -42,8 +42,8 @@ console.log("token in teacherdashboard", token);
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnZKP_67N4TUBXqPUBmykhS-bE3JGZjoa4owGGaa52mG-ulLfhDTA3tZL-2ag0Wzjs469mZMmITaFoWynz3PMkZDw4sLH-4y8qgOi6_JuEKvQwR86jO4swfR58joqFPIHZIpgz6RtVumil37fQaQs7PTYmB6TdCMN3Qo08JeSu5hAu-1E__OdpOZZ9_cSreL1miygCyNij840SF2f7spINxxKhpelyyV5C27Z9nuj3k_MyGFbbqwaslOMmmwv4_orKmVQOoieKYw" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-2xl font-bold mb-2">Generate Attendance QR Code</h3>
-                  <p className="text-gray-200 mb-6">Quickly generate a QR code for your class attendance. Students can scan it
+                  <h3 className="text-2xl font-bold mb-2 text-teal-600">Generate Attendance QR Code</h3>
+                  <p className=" mb-6 text-gray-600">Quickly generate a QR code for your class attendance. Students can scan it
                     to mark their presence.</p>
                   <button 
                   onClick={() => navigator("/generateqr")}

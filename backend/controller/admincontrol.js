@@ -7,6 +7,7 @@ const {AttendenceSchema}= require('../model/');
 ; // Attendance student model// Teacher model
 const {TeacherReport} = require('../model/'); // Teacher report model
 const {StudentReport} = require('../model/');
+
 // GET all students
  async function getAllStudents(req, res)  {
   try {

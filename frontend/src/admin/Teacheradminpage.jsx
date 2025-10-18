@@ -204,9 +204,7 @@ function TeacherAdminPage() {
           <header className="flex items-center justify-between px-6 py-4 bg-[#f6f7f8] dark:bg-[#111921] border-b border-gray-200 dark:border-gray-700">
             <div className="flex-1"></div>
             <div className="flex items-center gap-4">
-              <button className="p-2 rounded-full text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none">
-                <span className="material-symbols-outlined">notifications</span>
-              </button>
+        
               <div
                 className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
                 style={{
@@ -238,7 +236,7 @@ function TeacherAdminPage() {
                     search
                   </span>
                   <input
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-[#f6f7f8] dark:bg-[#111921] focus:outline-none focus:ring-2 focus:ring-[#197fe6] text-gray-800 dark:text-gray-100"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-[#f6f7f8] dark:bg-[#111921] focus:outline-none focus:ring-2 focus:ring-[#197fe6] text-white dark:text-white"
                     placeholder="Search by Unique ID..."
                     type="text"
                     value={searchUniqueId}
@@ -257,7 +255,7 @@ function TeacherAdminPage() {
               {/* Filter by Branch */}
               <div className="flex gap-2">
                 <select
-                  className="flex-1 py-2 px-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-[#f6f7f8] dark:bg-[#111921] focus:outline-none focus:ring-2 focus:ring-[#197fe6] text-gray-800 dark:text-gray-100"
+                  className="flex-1 py-2 px-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-[#f6f7f8] dark:bg-[#111921] focus:outline-none focus:ring-2 focus:ring-[#197fe6] text-white dark:text-gray-100"
                   value={filterBranch}
                   onChange={(e) => setFilterBranch(e.target.value)}
                 >
@@ -279,7 +277,7 @@ function TeacherAdminPage() {
 
               {/* Reset Button */}
               <button
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-100 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-100 bg-blue-600 dark:bg-blue-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
                 onClick={handleResetFilters}
               >
                 Reset All

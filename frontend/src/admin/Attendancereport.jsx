@@ -4,14 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import {
   getStudentAttendanceApi,
   getAttendanceByFilterApi,
-  getAllAttendanceApi
+  getAllAttendanceApi,
+  useApi
 } from '../apis/API';
 
 export default function AttendancePage() {
   const user = localStorage.getItem("student") || localStorage.getItem("teacher")|| localStorage.getItem("admin");
   const token = localStorage.getItem("token");
   const navigator = useNavigate();
-
+const API = useApi();
   const [parsedUser, setParsedUser] = useState({});
   const [searchEnrollment, setSearchEnrollment] = useState('');
   const [filterBranch, setFilterBranch] = useState('');
@@ -115,25 +116,13 @@ export default function AttendancePage() {
             <h2 className="text-2xl font-bold">Attendance Records</h2>
           </div>
           <div className="flex items-center gap-4">
-            <button className="relative p-2 rounded-full transition-colors" style={{ backgroundColor: "transparent" }}>
-              <span className="material-symbols-outlined">notifications</span>
-              <span className="absolute top-1 right-1 block h-2 w-2 rounded-full"
-                    style={{ backgroundColor: "#ef4444" }}></span>
-            </button>
             <div className="flex items-center gap-3">
               <img
                 alt="Admin"
                 className="size-10 rounded-full object-cover"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDK5bF0oOFTinmuFjDNz9fkuRuiXmN4moZTgBRFBHN4CKXjoh9F8w1OiAEiwGwKIhPeN3ivRKVd9Oz8jkFWgbxaCHdJHY4DQuMb8dLb0l9TVRhHNgb_-53Q0QK7UwASk756bc7HPIUgQphU0WtUmtvnVMBp7E8QLP3XmMNr7M3uWO-he338G2FLaDzgDPs6Jx98kmrrVTH_m_L6Oe8HNT8udCG0WDO4pmOjKBr3pmIlBITnZBzo41At4eYMg8dFlaZ8vhG2oBDPaP4"
               />
-              <div>
-                <p className="font-semibold">Admin User</p>
-                <p style={{ color: "#6b7280" }}>admin@ams.com</p>
-              </div>
             </div>
-            <button className="p-2 rounded-full transition-colors" style={{ backgroundColor: "transparent" }}>
-              <span className="material-symbols-outlined">logout</span>
-            </button>
           </div>
         </header>
 

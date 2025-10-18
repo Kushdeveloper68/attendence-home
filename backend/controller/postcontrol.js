@@ -437,11 +437,11 @@ async function handleStudentReport (req, res) {
 // Teacher report controller
 async function handleTeacherReport (req, res) {
   try {
-    const { name, email, problem } = req.body
-    if (!name || !email || !problem) {
+    const { name, email, problem , uniqueId} = req.body
+    if (!name || !email || !problem || !uniqueId) {
       return res.json({ message: 'All fields are required' })
     }
-    const report = new TeacherReport({ name, email, problem })
+    const report = new TeacherReport({ name, email, problem , uniqueId })
     await report.save()
     res.status(201).json({ message: 'Teacher report submitted successfully' })
   } catch (error) {

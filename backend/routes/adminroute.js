@@ -1,6 +1,16 @@
 const express = require('express');
 const AdminRouter = express.Router();
-const {getAllStudents,getStudentByEnrollment,filterStudents,createStudent,updateStudent,deleteStudent} = require('../controller/admincontrol');
+const admintokenCheckMiddleware = require('../middleware/admintokenmiddleware');
+const tokenCheckMiddleware = require('../middleware/tokencheckmiddleware');
+const roleCheckMiddleware = require('../middleware/roleCheckMiddleware');
+const {
+  getAllStudents,
+  getStudentByEnrollment,
+  filterStudents,
+  createStudent,
+  updateStudent,
+  deleteStudent
+} = require('../controller/admincontrol');
 const {
   getAllTeachers,
   getTeacherByUniqueId,
@@ -10,9 +20,11 @@ const {
   deleteTeacher
 } = require('../controller/admincontrol');
 
-const { getAttendanceByEnrollment,
+const {
+  getAttendanceByEnrollment,
   filterAttendance,
-  getAllAttendance} = require('../controller/admincontrol');
+  getAllAttendance
+} = require('../controller/admincontrol');
 
 const {
   getStudentCounts,
@@ -24,13 +36,17 @@ const {
 } = require('../controller/admincontrol');
 
 
-AdminRouter.get('/students', getAllStudents);
+// Apply admin token check middleware to all admin routes
+AdminRouter.use(admintokenCheckMiddleware);
+
+
+
+AdminRouter.get('/students', getAllStudents)
 AdminRouter.get('/students/search', getStudentByEnrollment);
 AdminRouter.get('/students/filter', filterStudents);
 AdminRouter.post('/students', createStudent);
 AdminRouter.put('/students/:id', updateStudent);
 AdminRouter.delete('/students/:id', deleteStudent);
-
 
 AdminRouter.get('/teachers', getAllTeachers);
 AdminRouter.get('/teachers/search', getTeacherByUniqueId);
@@ -43,7 +59,6 @@ AdminRouter.get('/attendance/search', getAttendanceByEnrollment);
 AdminRouter.get('/attendance/filter', filterAttendance);
 AdminRouter.get('/attendance/all', getAllAttendance);
 
-
 // Summary counts
 AdminRouter.get('/dashboard/student-counts', getStudentCounts);
 AdminRouter.get('/dashboard/teacher-counts', getTeacherCounts);
@@ -54,6 +69,5 @@ AdminRouter.get('/dashboard/student-reports', getStudentReports);
 
 AdminRouter.delete('/dashboard/teacher-reports/:id', deleteTeacherReport);
 AdminRouter.delete('/dashboard/student-reports/:id', deleteStudentReport);
-
 
 module.exports = AdminRouter;

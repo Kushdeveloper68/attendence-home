@@ -256,9 +256,9 @@ export default function StudentDashboard() {
               </h3>
               <StudentReportForm parsedUser={parsedUser}/>
             </div>
-            <div className='card p-6 bg-navy text-white'>
+            <div className='card p-6 bg-navy text-shadow-teal-950'>
               <h3 className='text-xl font-bold mb-4'>Terms & Conditions</h3>
-              <p className='text-gray-300 text-sm'>
+              <p className='text-gray-600 text-sm'>
                 Please adhere to the university's attendance policy. Misuse of
                 the system may lead to disciplinary action. Ensure all temporary
                 attendance reports are submitted with valid proof within 24

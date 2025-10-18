@@ -9,6 +9,7 @@ const handleSubmit = async (e) => {
     name: parsedUser.name,
     email: parsedUser.email,
     problem,
+    uniqueId: parsedUser.uniqueid,
   };
   try {
     const res = await submitTeacherReportApi(reportData);
@@ -28,6 +29,16 @@ const handleSubmit = async (e) => {
           id="name" type="text"
           placeholder="Enter your name"
           value={parsedUser.name}
+          readOnly
+        />
+      </div>
+      <div>
+        <label className="text-base font-medium text-[var(--dark-text)]" htmlFor="name">Name</label>
+        <input
+          className="mt-1 form-input w-full rounded-lg border-gray-300 focus:border-[var(--primary-teal)] focus:ring focus:ring-[var(--primary-teal)] focus:ring-opacity-50 transition"
+          id="name" type="text"
+          placeholder="Enter your name"
+          value={parsedUser.uniqueid}
           readOnly
         />
       </div>

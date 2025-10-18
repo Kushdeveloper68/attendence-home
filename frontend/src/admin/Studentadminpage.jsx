@@ -205,9 +205,7 @@ function StudentAdminPage() {
         <div className="flex h-full w-full">
           <AdminNavbar />
           <div className="flex flex-1 flex-col">
-            <header className="flex h-16 items-center justify-between border-b border-zinc-200 dark:border-zinc-700 px-6">
-              {/* ...header code... */}
-            </header>
+            
             {/* Main Content */}
             <main className="flex-1 p-6">
               <div className="flex flex-col gap-6">
@@ -223,7 +221,7 @@ function StudentAdminPage() {
                           search
                         </span>
                         <input
-                          className="w-full rounded-lg border border-zinc-200 bg-[#f6f7f8] dark:border-zinc-700 dark:bg-[#111921] py-2 pl-10 pr-4 text-[#111921] dark:text-[#f6f7f8] focus:outline-none focus:ring-2 focus:ring-[#197fe6]"
+                          className="w-full rounded-lg border border-zinc-200 bg-[#f6f7f8] dark:border-zinc-700 dark:bg-[#111921] py-2 pl-10 pr-4 text-[#fff] dark:text-[#fff] focus:outline-none focus:ring-2 focus:ring-[#197fe6]"
                           placeholder="Search by Enrollment No..."
                           value={searchEnrollment}
                           onChange={(e) => setSearchEnrollment(e.target.value)}
@@ -254,7 +252,7 @@ function StudentAdminPage() {
                     <div className="flex-1 min-w-[200px]">
                       <label className="block text-sm font-medium mb-2 text-zinc-700 dark:text-zinc-300">Branch</label>
                       <select
-                        className="w-full rounded-lg border px-4 py-2 border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921]"
+                        className="w-full rounded-lg border px-4 py-2 border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921] text-white"
                         value={filterBranch}
                         onChange={e => setFilterBranch(e.target.value)}
                       >
@@ -268,7 +266,7 @@ function StudentAdminPage() {
                     <div className="flex-1 min-w-[200px]">
                       <label className="block text-sm font-medium mb-2 text-zinc-700 dark:text-zinc-300">Semester</label>
                       <select
-                        className="w-full rounded-lg border px-4 py-2 border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921]"
+                        className="w-full rounded-lg border px-4 py-2 border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921] text-white"
                         value={filterSemester}
                         onChange={e => setFilterSemester(e.target.value)}
                       >
