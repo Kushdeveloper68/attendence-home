@@ -1,0 +1,114 @@
+ tree /f
+Folder PATH listing
+Volume serial number is 2CF4-F036
+C:.
+│   .gitignore
+│   MOCK_DATA (1).json
+│   MOCK_DATA.json
+│   package-lock.json
+│   package.json
+│   readme.md
+│
+├───backend
+│   │   .env
+│   │   index.js
+│   │
+│   ├───authentication
+│   ├───connection
+│   │       connection.js
+│   │
+│   ├───controller
+│   │       admincontrol.js
+│   │       admincreation.js
+│   │       getcontrol.js
+│   │       postcontrol.js
+│   │
+│   ├───middleware
+│   │       admintokenmiddleware.js
+│   │       ipinfomiddleware.js
+│   │       roleCheckMiddleware.js
+│   │       tokencheckmiddleware.js
+│   │
+│   ├───model
+│   │       adminmodel.js
+│   │       attendencesaved.js
+│   │       branch-sem-sub.js
+│   │       index.js
+│   │       studentReport.js
+│   │       studentsaved.js
+│   │       studentuser.js
+│   │       teacherReport.js
+│   │       teachersaved.js
+│   │       teacheruser.js
+│   │
+│   └───routes
+│           adminroute.js
+│           getrouters.js
+│           postroutes.js
+│
+├───design
+│       generateqr.html
+│       login.html
+│       markattendence.html
+│       signup.html
+│       studentmain.html
+│       teachermain.html
+│
+└───frontend
+    │   .gitignore
+    │   eslint.config.js
+    │   index.html
+    │   package-lock.json
+    │   package.json
+    │   README.md
+    │   vite.config.js
+    │
+    ├───public
+    └───src
+        │   App.css
+        │   App.jsx
+        │   index.css
+        │   main.jsx
+        │
+        ├───admin
+        │   │   Admindashboard.jsx
+        │   │   Attendancereport.jsx
+        │   │   index.js
+        │   │   Studentadminpage.jsx
+        │   │   Teacheradminpage.jsx
+        │   │
+        │   └───components
+        │           AdminNavbar.jsx
+        │           index.js
+        │
+        ├───apis
+        │       API.js
+        │
+        ├───assets
+        ├───components
+        │       Footer.jsx
+        │       Generaterqr.jsx
+        │       index.js
+        │       markattendence.jsx
+        │       Navbar.jsx
+        │       Popup.jsx
+        │       Profilecard.jsx
+        │       StudentReportForm.jsx
+        │       TeacherReportForm.jsx
+        │
+        ├───context
+        │       authcontext.jsx
+        │
+        ├───pages
+        │       index.js
+        │       Login.jsx
+        │       Signup.jsx
+        │       StudentDashboard.jsx
+        │       TeacherDashboard.jsx
+        │
+        └───styles
+                generateqr.css
+                markattendence.css
+                student.css
+                teacher.css
+
