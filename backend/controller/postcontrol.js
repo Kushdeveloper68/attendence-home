@@ -110,6 +110,9 @@ async function handleStudentUser (req, res) {
     }
     // find student in the student saved database by thier enrollement number
     const existingStudent = await StudentSaved.findOne({
+      email,
+      branch,
+      semester,
       enrollmentNumber: enrollment
     })
     if (!existingStudent)
@@ -185,6 +188,8 @@ async function handleTeacherUser (req, res) {
 
     // find teacher in the teacher saved database by thier uniqueid number
     const existingTeacher = await TeacherSaved.findOne({
+      email, 
+      branch,
       uniqueId: uniqueid
     })
 

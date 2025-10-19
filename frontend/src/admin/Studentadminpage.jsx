@@ -375,28 +375,28 @@ function StudentAdminPage() {
               </div>
               <form className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2" onSubmit={handleSubmit}>
                 <div>
-                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300" htmlFor="student-name">Full Name</label>
-                  <input className="mt-1 block w-full rounded-lg border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921] shadow-sm px-4 py-2 focus:border-[#197fe6] focus:ring-[#197fe6] sm:text-sm"
-                    id="student-name" name="student-name" required type="text" defaultValue={isEditMode ? selectedStudent?.name : ''} />
+                  <label className="block text-sm font-medium text-white dark:text-white" htmlFor="student-name">Full Name</label>
+                  <input className="mt-1 text-white block w-full rounded-lg border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921] shadow-sm px-4 py-2 focus:border-[#197fe6] focus:ring-[#197fe6] sm:text-sm"
+                    id="student-name" name="student-name" required type="text" defaultValue={isEditMode ? selectedStudent?.name : ''} placeholder="Enter student fullname" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300" htmlFor="student-email">Email Address</label>
-                  <input className="mt-1 block w-full rounded-lg border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921] shadow-sm px-4 py-2 focus:border-[#197fe6] focus:ring-[#197fe6] sm:text-sm"
-                    id="student-email" name="student-email" required type="email" defaultValue={isEditMode ? selectedStudent?.email : ''} />
+                  <input className="mt-1  text-white block w-full rounded-lg border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921] shadow-sm px-4 py-2 focus:border-[#197fe6] focus:ring-[#197fe6] sm:text-sm"
+                    id="student-email" name="student-email" required type="email" defaultValue={isEditMode ? selectedStudent?.email : ''} placeholder="Enter email address" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300" htmlFor="student-phone">Phone Number</label>
-                  <input className="mt-1 block w-full rounded-lg border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921] shadow-sm px-4 py-2 focus:border-[#197fe6] focus:ring-[#197fe6] sm:text-sm"
-                    id="student-phone" name="student-phone" required type="tel" defaultValue={isEditMode ? selectedStudent?.phone : ''} />
+                  <input className="mt-1 text-white block w-full rounded-lg border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921] shadow-sm px-4 py-2 focus:border-[#197fe6] focus:ring-[#197fe6] sm:text-sm"
+                    id="student-phone" name="student-phone" required type="tel" defaultValue={isEditMode ? selectedStudent?.phone : ''} placeholder="Enter phone number" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300" htmlFor="enrollment-no">Enrollment No.</label>
-                  <input className="mt-1 block w-full rounded-lg border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921] shadow-sm px-4 py-2 focus:border-[#197fe6] focus:ring-[#197fe6] sm:text-sm"
-                    id="enrollment-no" name="enrollment-no" required type="text" defaultValue={isEditMode ? selectedStudent?.enrollmentNumber : ''} />
+                  <input className="mt-1 text-white block w-full rounded-lg border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921] shadow-sm px-4 py-2 focus:border-[#197fe6] focus:ring-[#197fe6] sm:text-sm"
+                    id="enrollment-no" name="enrollment-no" required type="text" defaultValue={isEditMode ? selectedStudent?.enrollmentNumber : ''} placeholder="Enter enrollment number"/>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300" htmlFor="branch">Branch</label>
-                  <select className="mt-1 block w-full rounded-lg border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921] shadow-sm px-4 py-2 focus:border-[#197fe6] focus:ring-[#197fe6] sm:text-sm"
+                  <select className="mt-1 text-white  block w-full rounded-lg border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921] shadow-sm px-4 py-2 focus:border-[#197fe6] focus:ring-[#197fe6] sm:text-sm"
                     id="branch" name="branch" required defaultValue={isEditMode ? selectedStudent?.branch : ''}>
                     <option value="">Select Branch</option>
                     <option value="Computer Engineering">Computer Engineering</option>
@@ -407,7 +407,7 @@ function StudentAdminPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300" htmlFor="semester">Semester</label>
-                  <select className="mt-1 block w-full rounded-lg border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921] shadow-sm px-4 py-2 focus:border-[#197fe6] focus:ring-[#197fe6] sm:text-sm"
+                  <select className="mt-1 text-white block w-full rounded-lg border-zinc-300 bg-[#f6f7f8] dark:border-zinc-600 dark:bg-[#111921] shadow-sm px-4 py-2 focus:border-[#197fe6] focus:ring-[#197fe6] sm:text-sm"
                     id="semester" name="semester" required defaultValue={isEditMode ? selectedStudent?.semester : ''}>
                     <option value="">Select Semester</option>
                     <option value="1">1</option>

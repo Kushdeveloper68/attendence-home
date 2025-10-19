@@ -15,7 +15,7 @@ app.use(cors({
   credentials: true
 }));
 // connection
-mongodbConnection(process.env.mongoUrl || "mongodb://localhost:27017/Attendence")
+mongodbConnection(process.env.MONGO_URI || "mongodb://localhost:27017/Attendence")
   .then(() => console.log('mongodb conneted'))
   .catch(err => console.log('kush mongo err'))
 //routers 
