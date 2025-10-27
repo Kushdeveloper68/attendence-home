@@ -46,14 +46,6 @@ C:.
 │           getrouters.js
 │           postroutes.js
 │
-├───design
-│       generateqr.html
-│       login.html
-│       markattendence.html
-│       signup.html
-│       studentmain.html
-│       teachermain.html
-│
 └───frontend
     │   .gitignore
     │   eslint.config.js
