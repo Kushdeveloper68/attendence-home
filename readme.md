@@ -188,7 +188,7 @@ Please [open an issue](https://github.com/Kushdeveloper68/attendence-home/issues
 ---
 ##Help
 
-If you are facing any problem to deploy or maanage this project in your system. contact me: <a href="mailto:kushpandit68775@gmail.com">Email...<a>
+If you are facing any problem to deploy or manage this project in your system. contact me: <a href="mailto:kushpandit68775@gmail.com">Email...<a>
 
 
 ## 📝 License
