@@ -13,7 +13,7 @@
 
 **attendence-home** is a robust, full-stack attendance solution designed to streamline and digitally secure attendance workflows at educational institutions. With role-based web apps for students, teachers, and admins, the project builds a **QR-scanning, token-secured, real-time attendance management system**.
 
-Developed and deployed at Government Polytechnic Bhuj, but openly adaptable by anyone!
+Developed by kush pandit, but openly adaptable by anyone!
 
 ---
 
