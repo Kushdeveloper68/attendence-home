@@ -187,10 +187,14 @@ Open for improvements!
 Please [open an issue](https://github.com/Kushdeveloper68/attendence-home/issues) or contact me at [kushpandit68775@gmail.com](mailto:kushpandit68775@gmail.com) for access.
 
 ---
+##Help
+
+If you are facing any problem to deploy or maanage this project in your system. contact me: <a href="mailto:kushpandit68775@gmail.com">Email...<a>
+
 
 ## 📝 License
 
-MIT (2025) Kush Pandit / Government Polytechnic Bhuj (for default content)  
+MIT (2025) Kush Pandit.
 Free to use, fork, and modify for non-commercial academic/personal projects.
 
 ---
