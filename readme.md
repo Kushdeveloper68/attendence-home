@@ -173,8 +173,9 @@ Or: npm run dev (if using standard Vite config)
 
 ## ✏️ Customization
 
-- Change logo/branding in `/frontend/public` and `/frontend/src/assets`
-- Edit institution-specific details in landing/login UI.
+- Change logo/branding.
+- Edit institution-specific details in all dashboards.
+- After admin creation save student one by one in database. 
 
 ---
 
