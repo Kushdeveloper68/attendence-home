@@ -5,9 +5,9 @@ _For Government Polytechnic Bhuj — also customizable for any educational or or
 
 ---
 
-![Admin Dashboard Screenshot](screenshots/admin-dashboard.png)
-![Teacher Dashboard Screenshot](screenshots/teacher-dashboard.png)
-![Student Dashboard Screenshot](screenshots/student-dashboard.png)
+![Admin Dashboard Screenshot](photo/adminpage.png)
+![Teacher Dashboard Screenshot](photo/teacherpage.png)
+![Student Dashboard Screenshot](photo/studentpage.png)
 
 ---
 
@@ -100,7 +100,7 @@ attendence-home/
 
 | Admin Dashboard           | Teacher Dashboard          | Student Dashboard         |
 |---------------------------|---------------------------|--------------------------|
-| ![](screenshots/admin-dashboard.png) | ![](screenshots/teacher-dashboard.png) | ![](screenshots/student-dashboard.png) |
+| ![](photo/adminpage.png) | ![](photo/teacherpage.png) | ![](photo/studentpage.png) |
 
 ---
 
