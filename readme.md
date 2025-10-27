@@ -1,8 +1,6 @@
 # 🎓 attendence-home
 
 **Modern QR-Powered Attendance Management System**  
-_For Government Polytechnic Bhuj — also customizable for any educational or organisational setting_
-
 ---
 
 ![Admin Dashboard Screenshot](photo/adminpage.png)
